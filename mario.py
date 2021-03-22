@@ -33,6 +33,8 @@ bg = pygame.image.load("./static_images/background.png")
 mario_size = (32, 32)
 mario = pygame.image.load("./static_images/mario.png")
 mario = pygame.transform.scale(mario, mario_size)
+mario_x = 10
+mario_y = 752-32
 
 # goomba
 goomba_size = (32, 32)
@@ -53,11 +55,18 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        # get mario events
+        # if event.type == pygame.MOUSEMOTION:
+        #     print(pygame.MOUSEMOTION)
     # background
     screen.blit(bg,(0,350))
 
     # mario
-    screen.blit(mario, (10,752-32))
+    (x, y) = pygame.mouse.get_pos()
+    (mario_x, mario_y) = (x, y)
+    screen.blit(mario, (mario_x, mario_y))
+
+    # mario movement
 
     # goomba
     goomba_animation_i += 1
