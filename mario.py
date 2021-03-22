@@ -26,6 +26,10 @@ clock = pygame.time.Clock()
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
 
+# background
+bg = pygame.image.load("./static_images/background.png")
+
+# goomba
 goomba_size = (32, 32)
 goomba_animation_i = 0
 goomba_animation_list = []
@@ -44,11 +48,14 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-    
+    # background
+    screen.blit(bg,(0,350))
+
+    # goomba
     goomba_animation_i += 1
     if goomba_animation_i == 20:
         goomba_animation_i = 0
-    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (0, 752))
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (0, 752-32))
 
 
     pygame.display.update()
