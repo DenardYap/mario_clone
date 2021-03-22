@@ -26,8 +26,13 @@ clock = pygame.time.Clock()
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
 
-goomba = pygame.image.load("./static_images/goomba-1.png")
-goomba = pygame.transform.scale(goomba, (16,16))
+goomba_size = (32, 32)
+goomba_animation_i = 0
+goomba_animation_list = []
+goomba_animation_list.append(pygame.image.load("./static_images/goomba-1.png"))
+goomba_animation_list.append(pygame.image.load("./static_images/goomba-2.png"))
+for (i, image) in enumerate(goomba_animation_list):
+    goomba_animation_list[i] = pygame.transform.scale(goomba_animation_list[i], goomba_size)
 
 # import sounds here
 
@@ -40,7 +45,11 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
     
-    screen.blit(goomba, (0, 752))
+    goomba_animation_i += 1
+    if goomba_animation_i == 20:
+        goomba_animation_i = 0
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (0, 752))
+
 
     pygame.display.update()
     clock.tick(60) #limit our game to 60 fps no matter what
