@@ -1,7 +1,7 @@
 """
 Project: Python + Game
 Lead: Bernard Yap
-Team Members: Benjamin Goh, Nazrin Nazarudin, Yun Sion, Luke Leh, Lim Eejoy, Guan Zhou, Tarun, Raja
+Team Members: Benjamin Goh, Nazrin Nazarudin, Yun Sion, Luke Leh, Lim Eejoy, Guan Zhou, Tarun, Raja Darshini
 Goal: Clone the original mario game as much as possible!
 
 Credits to justinmeister for all the resources
