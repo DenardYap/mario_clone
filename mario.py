@@ -16,6 +16,7 @@ import sys
 pygame.init()
 # create a screen instance/object with 
 # 1000px width and 448px height
+screen = pygame.display.set_mode((1200,800))
 
 # I forgot to mention 'Clock'
 # the 'clock' instance help us to control the FPS
@@ -24,6 +25,9 @@ clock = pygame.time.Clock()
 
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
+
+goomba = pygame.image.load("./static_images/goomba-1.png")
+goomba = pygame.transform.scale(goomba, (16,16))
 
 # import sounds here
 
@@ -35,5 +39,8 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+    
+    screen.blit(goomba, (0, 752))
+
     pygame.display.update()
     clock.tick(60) #limit our game to 60 fps no matter what
