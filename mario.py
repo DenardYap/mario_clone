@@ -40,8 +40,8 @@ mario_y = 752-32
 goomba_size = (32, 32)
 goomba_animation_i = 0
 goomba_animation_list = []
-goomba_animation_list.append(pygame.image.load("./static_images/goomba-1.png"))
-goomba_animation_list.append(pygame.image.load("./static_images/goomba-2.png"))
+goomba_animation_list.append(pygame.image.load("./animate_images/goomba0.png"))
+goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
 for (i, image) in enumerate(goomba_animation_list):
     goomba_animation_list[i] = pygame.transform.scale(goomba_animation_list[i], goomba_size)
 
@@ -56,6 +56,8 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         # get mario events
+
+        # need to work out how it works
         # if event.type == pygame.MOUSEMOTION:
         #     print(pygame.MOUSEMOTION)
     # background
