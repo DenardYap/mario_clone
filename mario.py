@@ -64,26 +64,35 @@ while True:
     screen.blit(bg,(0, 0))
 
     # mario
+    # mario control
     (x, y) = pygame.mouse.get_pos()
-    # (mario_hitbox.x, mario_hitbox.y) = (x, y)
+    (mario_hitbox.x, mario_hitbox.y) = (x, y)
+    
+    # mario render
     screen.blit(mario, mario_hitbox)
 
 
 
     # goomba
-    goomba_hitbox.x -= 2
+    # goomba move
+    # goomba_hitbox.x -= 2
+
+    # goomba animation
     goomba_animation_i += 1
     if goomba_animation_i == 20:
         goomba_animation_i = 0
+
+    # goomba render
     screen.blit(goomba_animation_list[int(goomba_animation_i/10)], goomba_hitbox)
+    
+    # print(goomba_hitbox)
 
     # check collsion
     if mario_hitbox.colliderect(goomba_hitbox) == True:
         print("Game over!")
+    elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1))) == True:
+        print("Goomba dead")
 
-    # goomba_x
-    # goomba_head_point1 = goomba_x + 1
-    # goomba_head_point2 = goomba_x + 1
 
     pygame.display.update()
     clock.tick(60) #limit our game to 60 fps no matter what
