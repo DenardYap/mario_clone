@@ -16,7 +16,7 @@ import sys
 pygame.init()
 # create a screen instance/object with 
 # 1000px width and 448px height
-screen = pygame.display.set_mode((1200,800))
+screen = pygame.display.set_mode((1000,448))
 
 # I forgot to mention 'Clock'
 # the 'clock' instance help us to control the FPS
@@ -33,12 +33,13 @@ bg = pygame.image.load("./static_images/background.png")
 mario_size = (32, 32)
 mario = pygame.image.load("./static_images/mario.png")
 mario = pygame.transform.scale(mario, mario_size)
-mario_x = 10
-mario_y = 752-32
+mario_hitbox = mario.get_rect(topleft = (10, 448-48-32))
 
 # goomba
 goomba_size = (32, 32)
 goomba_animation_i = 0
+goomba_x = 700
+goomba_y = 448-32-48
 goomba_animation_list = []
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba0.png"))
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
@@ -61,21 +62,26 @@ while True:
         # if event.type == pygame.MOUSEMOTION:
         #     print(pygame.MOUSEMOTION)
     # background
-    screen.blit(bg,(0,350))
+    screen.blit(bg,(0, 0))
 
     # mario
     (x, y) = pygame.mouse.get_pos()
-    (mario_x, mario_y) = (x, y)
-    screen.blit(mario, (mario_x, mario_y))
+    # (mario_hitbox.x, mario_hitbox.y) = (x, y)
+    screen.blit(mario, mario_hitbox)
+    print(mario_hitbox)
 
-    # mario movement
+
 
     # goomba
     goomba_animation_i += 1
     if goomba_animation_i == 20:
         goomba_animation_i = 0
-    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (700, 752-32))
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (goomba_x, goomba_y))
 
+    # check collsion
+    # goomba_x
+    goomba_head_point1 = goomba_x + 1
+    goomba_head_point2 = goomba_x + 1
 
     pygame.display.update()
     clock.tick(60) #limit our game to 60 fps no matter what
