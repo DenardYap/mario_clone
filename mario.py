@@ -29,11 +29,6 @@ clock = pygame.time.Clock()
 # background
 bg = pygame.image.load("./static_images/background.png")
 
-# mario
-mario_size = (32, 32)
-mario = pygame.image.load("./static_images/mario.png")
-mario = pygame.transform.scale(mario, mario_size)
-
 # goomba
 goomba_size = (32, 32)
 goomba_animation_i = 0
@@ -56,14 +51,11 @@ while True:
     # background
     screen.blit(bg,(0,350))
 
-    # mario
-    screen.blit(mario, (10,752-32))
-
     # goomba
     goomba_animation_i += 1
     if goomba_animation_i == 20:
         goomba_animation_i = 0
-    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (700, 752-32))
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (0, 752-32))
 
 
     pygame.display.update()
