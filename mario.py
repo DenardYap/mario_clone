@@ -45,7 +45,6 @@ goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
 for (i, image) in enumerate(goomba_animation_list):
     goomba_animation_list[i] = pygame.transform.scale(goomba_animation_list[i], goomba_size)
 goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
-goomba_death_ani = pygame.transform.scale(pygame.image.load("./static_images/goomba_died.png"), (32, 16))
 
 # import sounds here
 
@@ -59,6 +58,9 @@ while True:
             sys.exit()
         # get mario events
 
+        # need to work out how it works
+        # if event.type == pygame.MOUSEMOTION:
+        #     print(pygame.MOUSEMOTION)
     # background
     screen.blit(bg,(0, 0))
 
@@ -71,10 +73,10 @@ while True:
     screen.blit(mario, mario_hitbox)
 
 
+
     # goomba
     # goomba move
-    if goomba_alive == True:
-        goomba_hitbox.x -= 2
+    # goomba_hitbox.x -= 2
 
     # goomba animation
     goomba_animation_i += 1
@@ -82,16 +84,16 @@ while True:
         goomba_animation_i = 0
 
     # goomba render
-    if goomba_alive == True:
-        screen.blit(goomba_animation_list[int(goomba_animation_i/10)], goomba_hitbox)
-    else:
-        screen.blit(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], goomba_hitbox)
+    
+    # print(goomba_hitbox)
 
     # check collsion
     if (mario_hitbox.colliderect(goomba_hitbox) and goomba_alive) == True:
         print("Game over!")
     elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1))) == True:
         goomba_alive = False
+        print("Goomba dead")
 
 
     pygame.display.update()
