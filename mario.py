@@ -36,7 +36,6 @@ mario = pygame.transform.scale(mario, mario_size)
 mario_hitbox = mario.get_rect(topleft = (10, 448-48-32))
 
 # goomba
-goomba_alive = True
 goomba_size = (32, 32)
 goomba_animation_i = 0
 goomba_animation_list = []
@@ -89,10 +88,9 @@ while True:
     # print(goomba_hitbox)
 
     # check collsion
-    if (mario_hitbox.colliderect(goomba_hitbox) and goomba_alive) == True:
+    if mario_hitbox.colliderect(goomba_hitbox) == True:
         print("Game over!")
     elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1))) == True:
-        goomba_alive = False
         print("Goomba dead")
 
 
