@@ -25,6 +25,8 @@ clock = pygame.time.Clock()
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
 
+
+
 # import sounds here
 
 
