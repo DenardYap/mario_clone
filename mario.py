@@ -38,13 +38,12 @@ mario_hitbox = mario.get_rect(topleft = (10, 448-48-32))
 # goomba
 goomba_size = (32, 32)
 goomba_animation_i = 0
-goomba_x = 700
-goomba_y = 448-32-48
 goomba_animation_list = []
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba0.png"))
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
 for (i, image) in enumerate(goomba_animation_list):
     goomba_animation_list[i] = pygame.transform.scale(goomba_animation_list[i], goomba_size)
+goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
 
 # import sounds here
 
@@ -68,20 +67,23 @@ while True:
     (x, y) = pygame.mouse.get_pos()
     # (mario_hitbox.x, mario_hitbox.y) = (x, y)
     screen.blit(mario, mario_hitbox)
-    print(mario_hitbox)
 
 
 
     # goomba
+    goomba_hitbox.x -= 2
     goomba_animation_i += 1
     if goomba_animation_i == 20:
         goomba_animation_i = 0
-    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], (goomba_x, goomba_y))
+    screen.blit(goomba_animation_list[int(goomba_animation_i/10)], goomba_hitbox)
 
     # check collsion
+    if mario_hitbox.colliderect(goomba_hitbox) == True:
+        print("Game over!")
+
     # goomba_x
-    goomba_head_point1 = goomba_x + 1
-    goomba_head_point2 = goomba_x + 1
+    # goomba_head_point1 = goomba_x + 1
+    # goomba_head_point2 = goomba_x + 1
 
     pygame.display.update()
     clock.tick(60) #limit our game to 60 fps no matter what
