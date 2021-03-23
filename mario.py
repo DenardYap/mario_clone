@@ -30,12 +30,15 @@ clock = pygame.time.Clock()
 
 # goomba
 goomba_alive = True
+goomba_size = (32, 32)
 goomba_animation_i = 0
 goomba_animation_list = []
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba0.png"))
 goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
+for (i, image) in enumerate(goomba_animation_list):
+    goomba_animation_list[i] = pygame.transform.scale(goomba_animation_list[i], goomba_size)
 goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
-goomba_death_ani = pygame.image.load("./static_images/goomba_died.png")
+goomba_death_ani = pygame.transform.scale(pygame.image.load("./static_images/goomba_died.png"), (32, 16))
 
 # import sounds here
 
@@ -58,22 +61,21 @@ while True:
         goomba_hitbox.x -= 2
 
     # goomba animation
-    goomba_animation_i += 0.1
-    if goomba_animation_i >= 2:
+    goomba_animation_i += 1
+    if goomba_animation_i == 20:
         goomba_animation_i = 0
 
     # goomba render
     if goomba_alive == True:
-        screen.blit(goomba_animation_list[int(goomba_animation_i)], goomba_hitbox)
+        screen.blit(goomba_animation_list[int(goomba_animation_i/10)], goomba_hitbox)
     else:
         screen.blit(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
 
     # check collsion
-    if (mario_hitbox.collidepoint((goomba_hitbox.x + 4, goomba_hitbox.y - 1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width - 4, goomba_hitbox.y - 1)) or mario_hitbox.collidepoint(goomba_hitbox.x + (int(goomba_hitbox.width / 2)), goomba_hitbox.y - 1)) == True:
+    if (mario_hitbox.colliderect(goomba_hitbox) and goomba_alive) == True:
+        print("Game over!")
+    elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1)) or mario_hitbox.collidepoint(goomba_hitbox.x + (int(goomba_hitbox.width / 2)), goomba_hitbox.y-1)) == True:
         goomba_alive = False
-    elif (mario_hitbox.colliderect(goomba_hitbox) and goomba_alive) == True:
-        print("Game over!", goomba_animation_i)
-        sys.exit()
 
 
     pygame.display.update()
