@@ -90,7 +90,7 @@ while True:
     # check collsion
     if (mario_hitbox.colliderect(goomba_hitbox) and goomba_alive) == True:
         print("Game over!")
-    elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1)) or mario_hitbox.collidepoint(goomba_hitbox.x + (int(goomba_hitbox.width / 2)), goomba_hitbox.y-1)) == True:
+    elif (mario_hitbox.collidepoint((goomba_hitbox.x, goomba_hitbox.y-1)) or mario_hitbox.collidepoint((goomba_hitbox.x + goomba_hitbox.width, goomba_hitbox.y-1))) == True:
         goomba_alive = False
 
 
