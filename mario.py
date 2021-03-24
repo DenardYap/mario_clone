@@ -17,7 +17,6 @@ pygame.init()
 # create a screen instance/object with 
 # 1000px width and 448px height
 
-screen = pygame.display.set_mode((1000, 448))
 
 # I forgot to mention 'Clock'
 # the 'clock' instance help us to control the FPS
@@ -27,12 +26,7 @@ clock = pygame.time.Clock()
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
 
-# background
-bg = pygame.image.load("./static_images/background.png")
 
-# mario
-mario = pygame.image.load("./static_images/mario.png")
-mario_hitbox = mario.get_rect(topleft = (10, 448-48-32))
 
 # goomba
 goomba_alive = True
@@ -51,16 +45,7 @@ while True:
             sys.exit()
         # get mario events
 
-    # background
-    screen.blit(bg,(0, 0))
 
-    # mario
-    # mario control
-    (x, y) = pygame.mouse.get_pos()
-    (mario_hitbox.x, mario_hitbox.y) = (x, y)
-
-    # mario render
-    screen.blit(mario, mario_hitbox)
 
 
     # goomba
