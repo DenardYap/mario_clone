@@ -19,16 +19,15 @@ clock = pygame.time.Clock()
 
 # import images & animation here
 # Tips: The bricks (floor) is 48px height
-startBackground = pygame.image.load(r'C:\Users\pc\Desktop\Mario\static_images\background.png')
-titleBanner = pygame.image.load(r'C:\Users\pc\Desktop\Mario\static_images\title.png')
-mario = pygame.image.load(r'C:\Users\pc\Desktop\Mario\static_images\mario.png')
+startBackground = pygame.image.load(r'static_images/background.png')
+titleBanner = pygame.image.load(r'static_images/title.png')
+mario = pygame.image.load(r'static_images/mario.png')
 
 # import sounds here
-main_theme_song = pygame.mixer.music.load(r'C:\Users\pc\Desktop\Mario\music\main_theme.ogg')
 
 # import fonts here
 pygame.font.init()
-font = pygame.font.Font(r'C:\Users\pc\Desktop\Mario\fonts\mario_font.ttf', 24)
+font = pygame.font.Font(r'fonts/mario_font.ttf', 24)
 copywrite = font.render("©1985 Nintendo", False ,(255,255,0))
 
 while True:
@@ -38,8 +37,6 @@ while True:
     screen.blit(titleBanner, (337.5,45)) 
     screen.blit(mario, (150,368)) 
     screen.blit(copywrite, (500, 220))
-    pygame.mixer.music.play(loops=-1)
-    #main_theme_song.stop() , when an event happens
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

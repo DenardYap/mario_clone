@@ -21,11 +21,10 @@ clock = pygame.time.Clock()
 # Tips: The bricks (floor) is 48px height
 
 # import sounds here
-game_over_song = pygame.mixer.music.load(r'C:\Users\pc\Desktop\Mario\music\game_over.ogg')
+game_over_sound = pygame.mixer.Sound(r'music/game_over.ogg')
 
 # import fonts here
-pygame.font.init()
-font = pygame.font.Font(r'C:\Users\pc\Desktop\Mario\fonts\mario_font.ttf', 72) 
+font = pygame.font.Font(r'fonts/mario_font.ttf', 72) 
 gameoverText = font.render("GAME OVER", False, (255,255,255))
 gameoverText_rect = gameoverText.get_rect(center=(500,224))
 
@@ -35,12 +34,11 @@ while True:
     #game over screen
     screen.fill((0,0,0))
     screen.blit(gameoverText,gameoverText_rect)
-    pygame.mixer.music.play(loops=-1) 
-    #song stops when event==quit
+    game_over_sound.play(loops=0,maxtime=0,fade_ms=0)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game_over_song.stop()
+            game_over_sound.stop()
             pygame.mixer.quit
             sys.exit()
     pygame.display.update()
