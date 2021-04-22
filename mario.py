@@ -11,7 +11,7 @@ https://supermarioplay.com/
 import pygame 
 import sys 
 from resources import * 
-from constant import * 
+from constants import * 
 
 #initializing pygame
 pygame.init()
