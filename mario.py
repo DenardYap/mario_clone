@@ -530,6 +530,65 @@ while True:
     if mario_rect.colliderect(red_mushroom_rect3):
         draw_mushroom3 = False
     
+    #mario move and jump
+    while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        
+        if event.type == pygame.KEYDOWN:         
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
+                moving_right = True
+                moving_left = False  
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
+                moving_left = True
+                moving_right = False
+            if event.key == pygame.K_w or event.key == pygame.K_UP:
+                jump = True
+        
+        if event.type == pygame.KEYUP:  
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                moving_right = False
+                count = 4
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                moving_left = False
+                count = 4
+    
+    if moving_right is True:
+        direction = heading
+        count += 0.1
+        if count >= 4:
+            count = 0    
+        if x_pos <= 974:
+            x_pos += velocity
+
+    if moving_left is True:
+        direction = direction - heading
+        count += 0.1
+        if count >= 4:
+            count = 0
+        if x_pos >= 1:
+            x_pos -= velocity
+
+    if jump is True:
+        count = 5
+        if jumpspeed >= -10:
+            neg = 1
+            if jumpspeed < 0:
+                neg = -1
+            y_pos -= (jumpspeed ** 2) * 0.2 * neg
+            jumpspeed -= 0.5
+        else:
+            jump = False
+            count = 4
+            jumpspeed =10
+      
+    display.blit(bg, (0,0))
+    if direction < 0:
+        display.blit(marioflip[int(count)], (x_pos,y_pos))
+    else:
+        display.blit(animation_list[int(count)], (x_pos,y_pos))
+    
     ####################################################
     pygame.display.update()                        #update screen
     clock.tick(60)                                 #limit our game to 60 fps no matter what
