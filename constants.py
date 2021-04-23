@@ -73,3 +73,14 @@ goomba_alive = True
 goomba_animation_i = 0
 
 #############
+#
+##Darshini's##
+x_pos = 50
+y_pos = 368
+moving_right = False
+moving_left = False
+jump = False
+jumpspeed = 10
+velocity = 5
+direction = 0
+heading = 1
