@@ -82,5 +82,7 @@ moving_left = False
 jump = False
 jumpspeed = 10
 velocity = 5
+count = 0
 direction = 0
 heading = 1
+
