@@ -89,3 +89,15 @@ star.append(pygame.image.load("animate_images/star3.png"))
 star_rect = star[0].get_rect(topleft = (3231, 270))
 
 ###############
+#Mario animation
+animation_list = []
+animation_list.append(pygame.image.load("animate_images/mario0.png"))
+animation_list.append(pygame.image.load("animate_images/mario1.png"))
+animation_list.append(pygame.image.load("animate_images/mario2.png"))
+animation_list.append(pygame.image.load("animate_images/mario1.png"))
+animation_list.append(pygame.image.load("static_images/mario.png"))
+animation_list.append(pygame.image.load("static_images/mario_jump.png"))
+
+marioflip = []
+for i,animation in enumerate(animation_list):
+    marioflip.append(pygame.transform.flip((animation_list[i]), True, False))
