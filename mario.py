@@ -531,7 +531,6 @@ while True:
         draw_mushroom3 = False
     
     #mario move and jump
-    while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -586,6 +585,8 @@ while True:
     display.blit(bg, (0,0))
     if direction < 0:
         display.blit(marioflip[int(count)], (x_pos,y_pos))
+    elif direction == 0:
+        display.blit(animation_list[4], (x_pos, y_pos))
     else:
         display.blit(animation_list[int(count)], (x_pos,y_pos))
     
