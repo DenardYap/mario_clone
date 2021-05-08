@@ -398,16 +398,16 @@ while True:
         # y_vel = (1/2) * m * (v**2)
 
         if star_rect.y <= 304:
-            vy = 2
+            vy = 1
         
         if star_rect.y >= 368:
-            vy = -2
+            vy = -1
 
         if star_rect.x >= 4200:
-            vx = -2
+            vx = -1
 
         if star_rect.x <= 3000:
-            vx = 2
+            vx = 1
 
         y_vel = vy
         x_vel = vx
