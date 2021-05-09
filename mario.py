@@ -46,8 +46,9 @@ def collidepoint_on_bg(bully, victim):
 
 # *****
 def colliderect_on_bg(bully, victim):
-    victim.left += bg_x_pos
-    return bully.colliderect(victim)
+    temp_victim = victim
+    temp_victim.left += bg_x_pos
+    return bully.colliderect(temp_victim)
 
 while True:
         
@@ -403,11 +404,11 @@ while True:
         if star_rect.y >= 368:
             vy = -1
 
-        if star_rect.x >= 4200:
-            vx = -1
-
         if star_rect.x <= 3000:
             vx = 1
+
+        if star_rect.x >= 4200:
+            vx = -1
 
         y_vel = vy
         x_vel = vx
