@@ -130,7 +130,7 @@ while True:
     screen.blit(mario, mario_rect)  #paint mario
 
     ### EEJOY's CODES ###
-    # COIN FLASH 
+    # Question block flash 
     count += 0.1
     if count >= 3:
         count = 0 
