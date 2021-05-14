@@ -138,14 +138,6 @@ while True:
     # Draw bricks
     draw_on_bg(brick, rect = coin_brick_rect) # Coin brick
     draw_on_bg(brick, rect = star_brick_rect) # Star brick
-
-    # def collide_brick(mario_rect, brick, brick_rect):
-    #     if collidepoint_on_bg(mario_rect, brick_rect.midbottom):
-    #         draw_brick = False
-    #     if draw_brick:
-    #         draw_on_bg(brick, rect = brick_rect)
-    
-    # collide_brick(mario_rect, brick, brick_rect1)
     
     # Brick 1
     if draw_brick1:
@@ -423,34 +415,6 @@ while True:
     draw_on_bg(question_block[int(count)], rect = question_rect7)
     draw_on_bg(question_block[int(count)], rect = question_rect8)
     draw_on_bg(question_block[int(count)], rect = question_rect9)
-
-    # def collide_coin(mario_rect, question_rect, count_coin, draw_empty_brick, draw_coin, coin, coin_rect):
-    #     if collidepoint_on_bg(mario_rect, question_rect.midbottom):
-    #         count_coin1 += 1
-
-    #         # Only draw coin for the first time of collision
-    #         if count_coin == 1:
-    #             draw_empty_brick = True
-    #             draw_coin = True
-    #             m = 1
-    #             v = 5
-
-    #     if draw_coin:
-    #         draw_on_bg(coin, rect = coin_rect)
-
-    #         # Let the coin jump
-    #         F = (1/2) * m * (v ** 2)
-    #         coin_rect.y -= F
-    #         v -= 0.2
-    #         if v < 0:
-    #             m = -1
-
-    #     if draw_empty_brick:
-    #         draw_on_bg(empty_brick, rect = question_rect)
-
-    #     if coin_rect.y > question_rect.y:
-    #         draw_coin = False
-
 
     # Coin 1
     if collidepoint_on_bg(mario_rect, question_rect1.midbottom):
