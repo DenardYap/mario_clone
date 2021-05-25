@@ -17,7 +17,7 @@ marioWalkL = False
 ### EEJOY's ###
 
 mario_speed = 5.0
-count = 0
+coin_count = 0
 
 draw_coin = False
 draw_star = False
@@ -65,6 +65,39 @@ draw_empty_brick9 = False
 draw_empty_brick10 = False
 draw_empty_brick11 = False
 draw_empty_brick12 = False
+
+
+draw_brick1 = True
+draw_brick2 = True
+draw_brick3 = True
+draw_brick4 = True
+draw_brick5 = True
+draw_brick6 = True
+draw_brick7 = True
+draw_brick8 = True
+draw_brick9 = True
+draw_brick10 = True
+draw_brick11 = True
+draw_brick12 = True
+draw_brick13 = True
+draw_brick14 = True
+draw_brick15 = True
+draw_brick16 = True
+draw_brick17 = True
+draw_brick18 = True
+draw_brick19 = True
+draw_brick20 = True
+draw_brick21 = True
+draw_brick22 = True
+draw_brick23 = True
+draw_brick24 = True
+draw_brick25 = True
+draw_brick26 = True
+draw_brick27 = True
+draw_brick28 = True
+draw_brick29 = True
+vx = 4
+vy = 5
 ###############
 
 ### BEN's ###
@@ -72,4 +105,23 @@ draw_empty_brick12 = False
 goomba_alive = True
 goomba_animation_i = 0
 
+#############
+#
+##Darshini's##
+BASE = 368 #mario default landing point = floor
+x_pos = 50
+y_pos = 368
+on_ground = True
+JUMP_HEIGHT = 128
+default_on_ground_y = 400
+moving_right = False
+moving_left = False
+mario_count = 0
+jump = False
+jumpspeed = 10
+velocity_x = 6
+velocity_y = 5
+direction = 0
+facing_right = 1
+facing_left = -1
 #############
