@@ -136,7 +136,7 @@ while True:
 
     ### BEN's codes ### 
     # goomba move
-    if goomba_alive == True:
+    if (goomba_alive == True) and (abs(goomba_hitbox.x - abs(bg_x_pos)) <= 800):
         goomba_hitbox.x -= 1
 
     # goomba animation
