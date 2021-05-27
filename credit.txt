@@ -1,0 +1,33 @@
+This credit is a rough sketch, feel free to add on! 
+
+Eejoy 
+1) Added all the question mark, mushrooms and star blocks, and added all the bricks 
+2) Created function colliderect_on_bg for rectangle's collision that have to be made while the rect sticks to the background 
+3) Applied physics for coin 
+4) Made coin animation 
+5) Made mushroom animation
+6) Made question block shining animation 
+7) Made bricks destroyable 
+
+Raja
+1) Made mario walk and jump 
+2) Made mario able to stand on bricks, floors and pipes
+3) Made mario unable to pass thru pipes and bricks horizontally
+4) Contributed to Jumping's logics 
+
+Naz
+1) Made the background screen move along with mario
+2) Contributed to mario walk and jump's logic
+
+Ben
+1) Made enemy goomba kill-able from the top
+2) Made mario die when hit goomba from the sides
+3) Made goomba only appear when mario is in a certain location
+
+Yun Sion
+1) Rendered title banner + copywrite 
+2) Made gameover scene + logics 
+
+Luke
+
+Tarun
