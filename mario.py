@@ -151,9 +151,7 @@ while True:
         draw_on_bg(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
         # add a delay to dissapear the dead goomba 
     # check collsion
-    if (mario_rect.collidepoint((goomba_hitbox.x + 4, goomba_hitbox.y - 1)) or 
-    mario_rect.collidepoint((goomba_hitbox.x + goomba_hitbox.width - 4, goomba_hitbox.y - 1)) or 
-    mario_rect.collidepoint(goomba_hitbox.x + (int(goomba_hitbox.width / 2)), goomba_hitbox.y - 1)) == True:
+    if (mario_rect.colliderect(goomba_hitbox) and on_ground) == True:
         goomba_alive = False
     elif (mario_rect.colliderect(goomba_hitbox) and goomba_alive) == True:
         print("Game over!")
