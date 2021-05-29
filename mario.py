@@ -872,8 +872,8 @@ while True:
 
     if direction == -1:
         screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
-    elif direction == 0:
-        screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
+    #elif direction == 0:
+        #screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
     else:
         screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
     ####################################################
