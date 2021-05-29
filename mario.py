@@ -824,10 +824,8 @@ while True:
         if event.type == pygame.KEYUP:  
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = False
-                mario_count = 4
             if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 moving_left = False
-                mario_count = 4
             if event.key == pygame.K_w or event.key == pygame.K_UP:
                 jump = False
     
@@ -846,7 +844,7 @@ while True:
         mario_rect.y -= velocity_y #goes down
         if on_ground:
             if moving_left or moving_right == True:
-                mario_count += 0.09
+                mario_count += 0.1
                 if mario_count >= 4:
                     mario_count = 0 
             else:
