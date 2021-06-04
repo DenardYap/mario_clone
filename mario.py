@@ -107,13 +107,13 @@ def check_collisonsy():
 
 def draw_brick_rect(brick_rect):
     if collidepoint_on_bg(mario_rect, brick_rect.midbottom):
-        remove_brick_list.append(brick_rect)
-        remove_brick_rect(brick_rect)
+        remove_brick_list.append(brick_rect) #Reverse, works
+        remove_brick_rect(brick_rect) #remove the rect
     
-    if brick_rect not in remove_brick_list:
+    if brick_rect not in remove_brick_list: #don't draw if it's collided
         draw_on_bg(brick, rect = brick_rect)
 
-def remove_brick_rect(brick_rect):
+def remove_brick_rect(brick_rect): #remove rects so it doesn't collide anymore
     for rect in hit_box_list:
         if rect == brick_rect:
             hit_box_list.remove(brick_rect)
@@ -131,7 +131,7 @@ def draw_coin_rect(question_rect, coin_rect):
         draw_on_bg(coin, rect = coin_rect)
         coin_jump(coin_rect, question_rect)
 
-    draw_empty_brick_rect(question_rect)
+    draw_empty_brick_rect(question_rect) 
 
 def coin_jump(coin_rect, question_rect):
     global m
