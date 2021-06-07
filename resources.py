@@ -13,6 +13,20 @@ bg = pygame.image.load("static_images/background.png")
 mario = pygame.image.load("static_images/mario.png")
 mario_rect = mario.get_rect(topleft = (40, 368))
 
+#fonts
+SCORE = "SCORE"
+COINS = "COINS"
+WORLD = "WORLD"
+TIME = "TIME"
+LIVES = "LIVES"
+WHITE = (255,255,255)
+mario_font = pygame.font.Font("fonts/mario_font.ttf", 36)
+score_font = mario_font.render(SCORE, False, WHITE)
+coins_font = mario_font.render(COINS, False, WHITE)
+world_font = mario_font.render(WORLD, False, WHITE)
+time_font = mario_font.render(TIME, False, WHITE)
+lives_font = mario_font.render(LIVES, False, WHITE)
+
 #pipe
 small_pipe = pygame.image.load("static_images/pipe_small.png")
 medium_pipe = pygame.image.load("static_images/pipe_medium.png")
@@ -23,9 +37,6 @@ pipe3_rect = long_pipe.get_rect(bottomleft = (1472,400))
 pipe4_rect = long_pipe.get_rect(bottomleft = (1824,400))
 pipe5_rect = small_pipe.get_rect(bottomleft = (5216,400))
 pipe6_rect = small_pipe.get_rect(bottomleft = (5728,400))
-
-
-
 
 ### YUN SION's ###
 
@@ -80,14 +91,19 @@ brick_rect24 = brick.get_rect(topleft = (4191, 144))
 brick_rect25 = brick.get_rect(topleft = (4127, 272))
 brick_rect26 = brick.get_rect(topleft = (4159, 272))
 brick_rect27 = brick.get_rect(topleft = (5374, 272))
-brick_rect28 = brick.get_rect(topleft = (5407, 272))
-brick_rect29 = brick.get_rect(topleft = (5471, 272))
+brick_rect28 = brick.get_rect(topleft = (5406, 272))
+brick_rect29 = brick.get_rect(topleft = (5470, 272))
 coin_brick_rect = brick.get_rect(topleft = (3007, 272))
 star_brick_rect = brick.get_rect(topleft = (3231, 272))
 
+remove_coin_list = []
+remove_mushroom_list = []
+remove_brick_list = []
+empty_brick_list = []
+
 # Import coin
 coin = pygame.image.load("static_images/coin.png")
-coin_rect = coin.get_rect(midtop = (3023, 272))
+coin_rect0 = coin.get_rect(midtop = (3023, 272))
 coin_rect1 = coin.get_rect(midtop = (527, 272))
 coin_rect2 = coin.get_rect(midtop = (752, 272))
 coin_rect3 = coin.get_rect(midtop = (719, 144))
@@ -122,7 +138,7 @@ question_rect5 = question_block[0].get_rect(topleft = (3391, 272))
 question_rect6 = question_block[0].get_rect(topleft = (3486, 272))
 question_rect7 = question_block[0].get_rect(topleft = (3582, 272))
 question_rect8 = question_block[0].get_rect(topleft = (4127, 144))
-question_rect9 = question_block[0].get_rect(topleft = (5439, 272))
+question_rect9 = question_block[0].get_rect(topleft = (5438, 272))
 
 # Mushroom box
 question_rect10 = question_block[0].get_rect(topleft = (672, 272))
@@ -159,5 +175,4 @@ animation_list.append(pygame.image.load("static_images/mario_jump.png"))
 marioflip = []
 for i,animation in enumerate(animation_list):
     marioflip.append(pygame.transform.flip((animation_list[i]), True, False))
-
 
