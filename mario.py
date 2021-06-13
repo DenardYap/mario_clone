@@ -12,6 +12,8 @@ https://supermarioplay.com/
 import pygame 
 from copy import copy
 import sys
+
+from pygame import time
 from resources import * 
 from constants import * 
 
@@ -21,7 +23,7 @@ pygame.init()
 # 1000px width and 448px height
 screen = pygame.display.set_mode((screenW,screenH))
 clock = pygame.time.Clock()
-start_ticks= pygame.time.get_ticks() # Use to countdown 
+time_ticks = pygame.time.get_ticks() # Use to countdown timer on top
 
 # function to draw the floors, total of 4 floors 
 def draw_floor():
@@ -111,6 +113,10 @@ def check_collisonsy():
             on_ground = False
 
 #### #### #### #### #### EEJOY's #### #### #### #### #### ####
+
+# ~ The names of the functions are pretty intuitive and you 
+# ~ can already tell what they do from then func names
+
 def draw_brick_rect(brick_rect):
     if collidepoint_on_bg(mario_rect, brick_rect.midbottom):
         remove_brick_list.append(brick_rect) #Reverse, works
@@ -124,7 +130,7 @@ def remove_brick_rect(brick_rect): #remove rects so it doesn't collide anymore
         if rect == brick_rect:
             hit_box_list.remove(brick_rect)
 
-def draw_empty_brick_rect(question_rect):
+def draw_empty_brick_rect(question_rect): 
     if question_rect in empty_brick_list:
         draw_on_bg(empty_brick, rect = question_rect)
 
@@ -159,28 +165,47 @@ def remove_coin_rect(coin_rect):
         if coin == coin_rect:
             remove_coin_list.remove(coin_rect)
     
-def draw_mushroom_rect(question_rect, red_mushroom_rect):
+def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
     if collidepoint_on_bg(mario_rect, question_rect.midbottom):
-        remove_mushroom_list.append(red_mushroom_rect)
         empty_brick_list.append(question_rect)
-        
+        if mario_size == 0:
+            remove_mushroom_list.append(red_mushroom_rect)
+            drawn_mushroom_list.append(red_mushroom_rect) #make sure only either mushroom or flower pop up once
+        elif mario_size == 1 and red_mushroom_rect not in drawn_mushroom_list and flower_rect not in drawn_flower_list:
+            remove_flower_list.append(flower_rect)
+            drawn_flower_list.append(flower_rect) #make sure only either mushroom or flower pop up once
+
     if red_mushroom_rect in remove_mushroom_list:
         draw_on_bg(red_mushroom, rect = red_mushroom_rect)
-        mushroom_rise(red_mushroom_rect, question_rect)
+        mushroom_flower_rise(red_mushroom_rect, question_rect)
 
-    remove_mushroom_rect(red_mushroom_rect)
+    if flower_rect in remove_flower_list:
+        global flower_count
+        flower_count += 0.1
+        if flower_count >= 3:
+            flower_count = 0
+        draw_on_bg(flower[int(flower_count)], rect = flower_rect)
+        mushroom_flower_rise(flower_rect, question_rect)
+
+    remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect)
     draw_empty_brick_rect(question_rect)
 
-def mushroom_rise(red_mushroom_rect, question_rect):
-    if ((red_mushroom_rect.midbottom[1] >= question_rect10.midtop[1]) and 
-       not(red_mushroom_rect.bottom <= question_rect.top)):
-        red_mushroom_rect.y -= 1
+def mushroom_flower_rise(mushroom_flower_rect, question_rect):
+    if ((mushroom_flower_rect.midbottom[1] >= question_rect.midtop[1]) and 
+       not(mushroom_flower_rect.bottom <= question_rect.top)):
+        mushroom_flower_rect.y -= 1
 
-def remove_mushroom_rect(red_mushroom_rect):
+def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
+    global mario_size
     if colliderect_on_bg(mario_rect, red_mushroom_rect):
         for mushroom in remove_mushroom_list:
             if mushroom == red_mushroom_rect:
                 remove_mushroom_list.remove(red_mushroom_rect)
+                mario_size = 1
+    if colliderect_on_bg(mario_rect, flower_rect):
+        for flower in remove_flower_list:
+            if flower == flower_rect:
+                remove_flower_list.remove(flower_rect)
 
 #### #### #### #### #### EEJOY's end #### #### #### #### #### ####
 
@@ -201,18 +226,63 @@ def update_coins():
 
 def update_lives():
     # call this funcion everytime mario dies 
+    # UNFINISHED
     global lives_value
     lives_value -= 1 
+    if lives_value == 0:
+        pass
+        # black screen it 
 
+# example code on adding score once
+# mario touches the pole, To be ameliorated
+def check_pole():
+    global score_value
+    if colliderect_on_bg(mario_rect, pole_rect):
+        if mario_rect.y <= 93:
+            score_value += 5000
+        elif mario_rect.y <=  148:
+            score_value += 4000
+        elif mario_rect.y <=  203:
+            score_value += 3000
+        elif mario_rect.y <=  258:
+            score_value += 2000
+        elif mario_rect.y <=  313:
+            score_value += 1000
+        elif mario_rect.y <= 368:
+            score_value += 100 
 
 while True:
+
+    check_pole() # TBD
+    # The floors for mario to stand on
     draw_floor() #draw the floor before the BG 
     screen.blit(bg, (bg_x_pos,0)) #draw BG 
+    draw_on_bg(pole, rect = pole_rect)
+    draw_on_bg(pole_ball, pole_ball_co)
+
+    # ~ Mario dead logic 
+    if mario_dead == False:
+        # timer to decrease the 400 times 
+        # in Mario, 1 sec is 0.6 sec in real life 
+        seconds=(pygame.time.get_ticks()-time_ticks)/600
+        if (time_value - int(seconds)) <= 0:
+            mario_dead = True
+    else:
+        # these are the things that only have to 
+        # happen ONE TIME after mario died
+        if mario_died_one_time == False:
+            # pause all other musics
+            mario_died_x = mario_rect.x
+            mario_died_y = mario_rect.y
+            mario_died_one_time = True
+            mario_dead_sound.play()
+        # ~ Let Mario jumps when he dies 
+        if mario_died_y <= 272:
+            mario_dead_velo = 3
+        mario_died_y += mario_dead_velo
+
 
     # ~ Render Top texts 
-    # timer to decrease the 400 times 
-    # in Mario, 1 sec is 0.6 sec in real life 
-    seconds=(pygame.time.get_ticks()-start_ticks)/600
     screen.blit(score_font, (50,0))
     score_value_font = mario_font.render(str(score_value), False, WHITE)
     # need to place it in the middle of the above font 
@@ -241,7 +311,7 @@ while True:
     lives_value_font = mario_font.render(str(lives_value), False, WHITE)
     exact_center = lives_font.get_width()/2 + 850 - lives_value_font.get_width()/2
     screen.blit(lives_value_font, (exact_center, 30))
-    
+
     #### #### #### #### #### BEN's #### #### #### #### #### ####
     # goomba move
     if goomba_alive == True:
@@ -259,13 +329,12 @@ while True:
         draw_on_bg(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
         # add a delay to dissapear the dead goomba 
     # check collsion
-    if (mario_rect.collidepoint((goomba_hitbox.x + 4, goomba_hitbox.y - 1)) or 
-    mario_rect.collidepoint((goomba_hitbox.x + goomba_hitbox.width - 4, goomba_hitbox.y - 1)) or 
-    mario_rect.collidepoint(goomba_hitbox.x + (int(goomba_hitbox.width / 2)), goomba_hitbox.y - 1)) == True:
+    if (colliderect_on_bg(mario_rect, goomba_hitbox) and (on_ground == False)) == True:
         goomba_alive = False
-    elif (mario_rect.colliderect(goomba_hitbox) and goomba_alive) == True:
-        print("Game over!")
-        sys.exit()
+    elif (colliderect_on_bg(mario_rect, goomba_hitbox) and goomba_alive) == True:
+        if mario_state != 1:
+            mario_dead = True
+            # sys.exit()
 
     #### #### #### #### #### BEN's end #### #### #### #### #### ####
 
@@ -375,6 +444,8 @@ while True:
 
     if star_rect.top >= star_brick_rect.bottom and colliderect_on_bg(mario_rect, star_rect):
         draw_star = False
+        mario_state = 1
+        start_time = pygame.time.get_ticks()
 
     # Question block flash
     question_count += 0.1
@@ -407,9 +478,21 @@ while True:
     draw_on_bg(question_block[int(question_count)], rect = question_rect11)
     draw_on_bg(question_block[int(question_count)], rect = question_rect12)
 
-    draw_mushroom_rect(question_rect10, red_mushroom_rect1)
-    draw_mushroom_rect(question_rect11, red_mushroom_rect2)
-    draw_mushroom_rect(question_rect12, red_mushroom_rect3)
+    draw_mushroom_or_flower_rect(question_rect10, red_mushroom_rect1, flower_rect1)
+    draw_mushroom_or_flower_rect(question_rect11, red_mushroom_rect2, flower_rect2)
+    draw_mushroom_or_flower_rect(question_rect12, red_mushroom_rect3, flower_rect3)
+    # Small invincible flash
+    invincible_count += 0.09
+    if invincible_count >= 3:
+        invincible_count = 0
+
+    # ~ Display invincible only for 10 seconds
+    if start_time:
+        time_taken = pygame.time.get_ticks() - start_time
+        if time_taken >= 10000:
+            # play invincible music 
+            mario_state = 0
+            start_time = 0
 
     #### #### #### #### #### EEJOY's end #### #### #### #### #### ####
 
@@ -419,29 +502,34 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if mario_dead == False:
+            if event.type == pygame.KEYDOWN:         
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
+                    moving_right = True
+                    moving_left = False  
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
+                    moving_left = True
+                    moving_right = False
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    if on_ground == True: #makes it run only once 
+                        on_ground = False
+                        jump = True
 
-        if event.type == pygame.KEYDOWN:         
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
-                moving_right = True
-                moving_left = False  
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
-                moving_left = True
-                moving_right = False
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                if on_ground == True: #makes it run only once 
-                    on_ground = False
-                    jump = True
-
-    # ~ DISABLE MOVE/JUMP 
-        if event.type == pygame.KEYUP:  
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                moving_right = False
-                mario_count = 4
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                moving_left = False
-                mario_count = 4
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                jump = False
+        # ~ DISABLE MOVE/JUMP 
+            if event.type == pygame.KEYUP:  
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    moving_right = False
+                    mario_count = 4
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    moving_left = False
+                    mario_count = 4
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    jump = False
+        if mario_dead == True:
+            moving_right = False
+            moving_left = False
+            mario_count = 4
+            jump = False
 
     # ~ JUMP's logic 
     if jump == True:
@@ -475,24 +563,39 @@ while True:
                 mario_rect.x += velocity_x
             else:
                 bg_x_pos -= velocity_x          #after reaching the middle, background will move
+        else: #mario reaches the end
+            mario_rect.x += velocity_x 
 
     if moving_left == True:
-        direction = facing_left
+        direction = facing_left 
         if mario_rect.x >= 0:
             mario_rect.x -= velocity_x
 
     check_collisonsx() # check horizontal collision immediately so mario don't walk past rects like Pipes
 
     # ~ JUMP and WALK animation 
-    if on_ground == False:
-        mario_count = 5
+    # ~ Play invincible if mario_state = 1
 
-    if direction == -1:
-        screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
-    elif direction == 0:
-        screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
+    if mario_dead == False:
+        if on_ground == False:
+            mario_count = 5
+        if direction == -1:
+            if mario_state == 0:
+                screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+        elif direction == 0:
+            if mario_state == 0:
+                screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+        else:
+            if mario_state == 0:
+                screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
     else:
-        screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
+        screen.blit(mario_died_pic,(mario_died_x, mario_died_y))
     #### #### #### #### #### RAJA's end #### #### #### #### #### ####
 
     pygame.display.update()  #update screen
