@@ -16,10 +16,17 @@ bglimitH = screenH - bgH
 # marioSpeed = 10
 
 
+### YUN SION's ###
+mario_dead = False
+mario_died_one_time = False
+mario_died_x = 0
+mario_died_y = 0
+mario_dead_velo = -3
 ### EEJOY's ###
 
 mario_speed = 5.0
 question_count = 0
+flower_count = 0
 
 draw_coin = False
 draw_star = False
@@ -33,6 +40,13 @@ vy = 5
 m = 1
 v = 5
 
+# If small = 0, big = 1
+mario_size = 0
+# If normal = 0, invincible = 1
+mario_state = 0
+
+invincible_count = 0
+start_time = 0
 ### BEN's ###
 
 goomba_alive = True
@@ -50,7 +64,7 @@ moving_left = False
 mario_count = 0
 jump = False
 jumpspeed = 10
-velocity_x = 6
+velocity_x = 7
 velocity_y = 5
 direction = 0
 facing_right = 1
@@ -63,4 +77,3 @@ coins_value = 0
 world_value = "1-1"
 time_value = 400
 lives_value = 3
-
