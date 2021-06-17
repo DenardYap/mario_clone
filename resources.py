@@ -65,7 +65,6 @@ goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
 goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
 goomba_death_ani = pygame.image.load("./static_images/goomba_died.png")
 
-enemy_list = [goomba_hitbox]
 goomba1 = goomba_animation_list[0].get_rect(topleft = (345, 368))
 goomba2 = goomba_animation_list[0].get_rect(topleft = (633, 368))
 goomba3 = goomba_animation_list[0].get_rect(topleft = (809, 368))
@@ -83,6 +82,8 @@ goomba13 = goomba_animation_list[0].get_rect(topleft = (2041, 368))
 goomba14 = goomba_animation_list[0].get_rect(topleft = (2065, 368))
 goomba15 = goomba_animation_list[0].get_rect(topleft = (2777, 368))
 goomba16 = goomba_animation_list[0].get_rect(topleft = (2888, 368))
+enemy_list = [goomba1, goomba2, goomba3, goomba4, goomba5, goomba6, goomba7, goomba8, goomba9, goomba10, goomba11, goomba12, goomba13, goomba14, goomba15, goomba16]
+
 
 #############
 

@@ -314,8 +314,10 @@ while True:
 
     #### #### #### #### #### BEN's #### #### #### #### #### ####
     # goomba move
-    if goomba_alive == True:
-        goomba_hitbox.x -= 1
+    for goomba_i in enemy_list:
+        # need to change goomba_alive to goomba_i.alive
+        if (goomba_alive == True) and (abs(goomba_hitbox.x - abs(bg_x_pos)) <= 800):
+            goomba_hitbox.x -= 1
 
     # goomba animation
     goomba_animation_i += 0.1
