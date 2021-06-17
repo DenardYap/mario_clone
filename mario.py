@@ -12,6 +12,8 @@ https://supermarioplay.com/
 import pygame 
 from copy import copy
 import sys
+
+from pygame import time
 from resources import * 
 from constants import * 
 
@@ -20,19 +22,18 @@ pygame.init()
 
 # 1000px width and 448px height
 screen = pygame.display.set_mode((screenW,screenH))
-
 clock = pygame.time.Clock()
-    
-#variables
-bgLimit = screenW - bgW
-bglimitH = screenH - bgH
+time_ticks = pygame.time.get_ticks() # Use to countdown timer on top
 
+# function to draw the floors, total of 4 floors 
 def draw_floor():
     for floor in floor_list:
         temp_rect = copy(floor)
         temp_rect.x += bg_x_pos # glue # actually minus
         pygame.draw.rect(screen, (0,0,0), temp_rect)
         
+# function to blit pictures (not rect) that sticks to the background 
+# without this function everything will move with mario 
 def draw_on_bg(pic, xy = (0,0), rect=False):
     # use this function instead of blit if you want 
     # to blit an image that sticks to the screen
@@ -42,6 +43,8 @@ def draw_on_bg(pic, xy = (0,0), rect=False):
     else:
         screen.blit(pic, (bg_x_pos + rect.x, rect.y))
     
+# detect collidepoint while the rect is stick to the background
+# without this function the rects will just move along with mario
 def collidepoint_on_bg(bully, victim):
     # use this function instead of collidepoint
     # as we need to detect rects that are sticked
@@ -53,12 +56,15 @@ def collidepoint_on_bg(bully, victim):
     """
     return bully.collidepoint((bg_x_pos + victim[0], victim[1]))
 
+# detect colliderect while the rect is stick to the background
+# without this function the rects will just move along with mario
 def colliderect_on_bg(bully, victim):
     
     temp_victim = copy(victim) 
     temp_victim.x += bg_x_pos 
     return bully.colliderect(temp_victim)
 
+# check mario's horizontal collision, if detected, stop mario from moving
 def check_collisonsx():
     global mario_rect
     global hit_box_list
@@ -82,6 +88,7 @@ def check_collisonsx():
                     mario_rect.x = temp_hit_box.right
                     mario_count = 4
 
+# check mario's vertical collision, if detected, stop mario from going up or down
 def check_collisonsy():
     global mario_rect
     global hit_box_list 
@@ -97,7 +104,6 @@ def check_collisonsy():
         temp_hit_box.x += bg_x_pos
         if mario_rect.colliderect(temp_hit_box):
             if velocity_y > 0: #mario is jumping up 
-                print(mario_rect.top)
                 jump = False
             elif velocity_y < 0: #mario is jumping down 
                 default_on_ground_y = temp_hit_box.top
@@ -106,37 +112,209 @@ def check_collisonsy():
         elif mario_rect.bottom > default_on_ground_y:
             on_ground = False
 
+#### #### #### #### #### EEJOY's #### #### #### #### #### ####
+
+# ~ The names of the functions are pretty intuitive and you 
+# ~ can already tell what they do from then func names
+
+def draw_brick_rect(brick_rect):
+    if collidepoint_on_bg(mario_rect, brick_rect.midbottom):
+        remove_brick_list.append(brick_rect) #Reverse, works
+        remove_brick_rect(brick_rect) #remove the rect
+    
+    if brick_rect not in remove_brick_list: #don't draw if it's collided
+        draw_on_bg(brick, rect = brick_rect)
+
+def remove_brick_rect(brick_rect): #remove rects so it doesn't collide anymore
+    for rect in hit_box_list:
+        if rect == brick_rect:
+            hit_box_list.remove(brick_rect)
+
+def draw_empty_brick_rect(question_rect): 
+    if question_rect in empty_brick_list:
+        draw_on_bg(empty_brick, rect = question_rect)
+
+def draw_coin_rect(question_rect, coin_rect):
+    if collidepoint_on_bg(mario_rect, question_rect.midbottom):
+        remove_coin_list.append(coin_rect)
+        empty_brick_list.append(question_rect)
+        
+    if coin_rect in remove_coin_list:
+        draw_on_bg(coin, rect = coin_rect)
+        coin_jump(coin_rect, question_rect)
+
+    draw_empty_brick_rect(question_rect) 
+
+def coin_jump(coin_rect, question_rect):
+    global m
+    global v
+
+    if not coin_rect.y > question_rect.y:
+        F = (1/2) * m * (v ** 2)
+        coin_rect.y -= F
+        v -= 0.2
+        if v < 0:
+            m = -1
+    else:
+        remove_coin_rect(coin_rect)
+        m = 1
+        v = 5
+
+def remove_coin_rect(coin_rect):
+    for coin in remove_coin_list:
+        if coin == coin_rect:
+            remove_coin_list.remove(coin_rect)
+    
+def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
+    if collidepoint_on_bg(mario_rect, question_rect.midbottom):
+        empty_brick_list.append(question_rect)
+        if mario_size == 0:
+            remove_mushroom_list.append(red_mushroom_rect)
+            drawn_mushroom_list.append(red_mushroom_rect) #make sure only either mushroom or flower pop up once
+        elif mario_size == 1 and red_mushroom_rect not in drawn_mushroom_list and flower_rect not in drawn_flower_list:
+            remove_flower_list.append(flower_rect)
+            drawn_flower_list.append(flower_rect) #make sure only either mushroom or flower pop up once
+
+    if red_mushroom_rect in remove_mushroom_list:
+        draw_on_bg(red_mushroom, rect = red_mushroom_rect)
+        mushroom_flower_rise(red_mushroom_rect, question_rect)
+
+    if flower_rect in remove_flower_list:
+        global flower_count
+        flower_count += 0.1
+        if flower_count >= 3:
+            flower_count = 0
+        draw_on_bg(flower[int(flower_count)], rect = flower_rect)
+        mushroom_flower_rise(flower_rect, question_rect)
+
+    remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect)
+    draw_empty_brick_rect(question_rect)
+
+def mushroom_flower_rise(mushroom_flower_rect, question_rect):
+    if ((mushroom_flower_rect.midbottom[1] >= question_rect.midtop[1]) and 
+       not(mushroom_flower_rect.bottom <= question_rect.top)):
+        mushroom_flower_rect.y -= 1
+
+def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
+    global mario_size
+    if colliderect_on_bg(mario_rect, red_mushroom_rect):
+        for mushroom in remove_mushroom_list:
+            if mushroom == red_mushroom_rect:
+                remove_mushroom_list.remove(red_mushroom_rect)
+                mario_size = 1
+    if colliderect_on_bg(mario_rect, flower_rect):
+        for flower in remove_flower_list:
+            if flower == flower_rect:
+                remove_flower_list.remove(flower_rect)
+
+#### #### #### #### #### EEJOY's end #### #### #### #### #### ####
+
+def update_score(X):
+    # everytime did something call this function 
+    """
+    X - value to be added, an integer
+    """
+    global score_value 
+    score_value += int(X)
+
+def update_coins():
+    # everytime hit a coin call this function
+    global coins_value
+    coins_value += 1
+
+# update_time not needed
+
+def update_lives():
+    # call this funcion everytime mario dies 
+    # UNFINISHED
+    global lives_value
+    lives_value -= 1 
+    if lives_value == 0:
+        pass
+        # black screen it 
+
+# example code on adding score once
+# mario touches the pole, To be ameliorated
+def check_pole():
+    global score_value
+    if colliderect_on_bg(mario_rect, pole_rect):
+        if mario_rect.y <= 93:
+            score_value += 5000
+        elif mario_rect.y <=  148:
+            score_value += 4000
+        elif mario_rect.y <=  203:
+            score_value += 3000
+        elif mario_rect.y <=  258:
+            score_value += 2000
+        elif mario_rect.y <=  313:
+            score_value += 1000
+        elif mario_rect.y <= 368:
+            score_value += 100 
 
 while True:
-    
-    draw_floor()
-    screen.blit(bg, (bg_x_pos,0))                  #paint background
-    # ### NAZ's CODES ###
-    # for event in pygame.event.get():
-    #     if event.type == pygame.QUIT:
-    #         sys.exit()
 
-    #     if event.type == pygame.KEYDOWN:     #user pressed a key      
-    #         if event.key == pygame.K_d:      #user pressed the D key
-    #             marioWalkR = True
-    #         if event.key == pygame.K_a:      #user pressed the A key
-    #             marioWalkL = True
-    #         if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
-    #             mario_rect.y -= mario_speed
-    #         if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-    #             mario_rect.y += mario_speed
-        
-    #     if event.type == pygame.KEYUP:       #user released a key
-    #         if event.key == pygame.K_d:      #user released the D key
-    #             marioWalkR = False
-    #         if event.key == pygame.K_a:      #user released the A key
-    #             marioWalkL = False
+    check_pole() # TBD
+    # The floors for mario to stand on
+    draw_floor() #draw the floor before the BG 
+    screen.blit(bg, (bg_x_pos,0)) #draw BG 
+    draw_on_bg(pole, rect = pole_rect)
+    draw_on_bg(pole_ball, pole_ball_co)
 
-    ########################################
+    # ~ Mario dead logic 
+    if mario_dead == False:
+        # timer to decrease the 400 times 
+        # in Mario, 1 sec is 0.6 sec in real life 
+        seconds=(pygame.time.get_ticks()-time_ticks)/600
+        if (time_value - int(seconds)) <= 0:
+            mario_dead = True
+    else:
+        # these are the things that only have to 
+        # happen ONE TIME after mario died
+        if mario_died_one_time == False:
+            # pause all other musics
+            mario_died_x = mario_rect.x
+            mario_died_y = mario_rect.y
+            mario_died_one_time = True
+            mario_dead_sound.play()
+        # ~ Let Mario jumps when he dies 
+        if mario_died_y <= 272:
+            mario_dead_velo = 3
+        mario_died_y += mario_dead_velo
 
-    ### BEN's codes ### 
+
+    # ~ Render Top texts 
+    screen.blit(score_font, (50,0))
+    score_value_font = mario_font.render(str(score_value), False, WHITE)
+    # need to place it in the middle of the above font 
+    # logics below 
+    # get the half width of the above font, then plus its original X location, then minus 
+    # value's font width divide by 2, you can get the exact center.. 
+    exact_center = score_font.get_width()/2 + 50 - score_value_font.get_width()/2
+    screen.blit(score_value_font, (exact_center, 30))
+
+    screen.blit(coins_font, (250,0))
+    coins_value_font = mario_font.render(str(coins_value), False, WHITE)
+    exact_center = coins_font.get_width()/2 + 250 - coins_value_font.get_width()/2
+    screen.blit(coins_value_font, (exact_center, 30))
+
+    screen.blit(world_font, (450,0))
+    world_value_font = mario_font.render(world_value, False, WHITE)
+    exact_center = world_font.get_width()/2 + 450 - world_value_font.get_width()/2
+    screen.blit(world_value_font, (exact_center, 30))
+
+    screen.blit(time_font, (650,0))
+    time_value_font = mario_font.render(str(time_value-int(seconds)), False, WHITE)
+    exact_center = time_font.get_width()/2 + 650 - time_value_font.get_width()/2
+    screen.blit(time_value_font, (exact_center, 30))
+
+    screen.blit(lives_font, (850,0))
+    lives_value_font = mario_font.render(str(lives_value), False, WHITE)
+    exact_center = lives_font.get_width()/2 + 850 - lives_value_font.get_width()/2
+    screen.blit(lives_value_font, (exact_center, 30))
+
+    #### #### #### #### #### BEN's #### #### #### #### #### ####
     # goomba move
-    if (goomba_alive == True) and (abs(goomba_hitbox.x - abs(bg_x_pos)) <= 800):
+    if goomba_alive == True:
         goomba_hitbox.x -= 1
 
     # goomba animation
@@ -151,267 +329,61 @@ while True:
         draw_on_bg(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
         # add a delay to dissapear the dead goomba 
     # check collsion
-    if (mario_rect.colliderect(goomba_hitbox) and (on_ground == False)) == True:
+    if (colliderect_on_bg(mario_rect, goomba_hitbox) and (on_ground == False)) == True:
         goomba_alive = False
-    elif (mario_rect.colliderect(goomba_hitbox) and goomba_alive) == True:
-        print("Game over!")
-        sys.exit()
+    elif (colliderect_on_bg(mario_rect, goomba_hitbox) and goomba_alive) == True:
+        if mario_state != 1:
+            mario_dead = True
+            # sys.exit()
 
-    ########################################
+    #### #### #### #### #### BEN's end #### #### #### #### #### ####
 
-    ### YUN SION's codes ###
-    draw_on_bg(titleBanner, (37.5, 45)) 
-    draw_on_bg(copywrite, (200, 220))
+    #### #### #### #### #### YUN SION's #### #### #### #### #### ####
+    draw_on_bg(titleBanner, (37.5, 75)) 
+    draw_on_bg(copywrite, (200, 250))
 
     # Gameover scene # 
     # when mario dies, play this #
     # screen.fill((0,0,0))
     # screen.blit(gameoverText,gameoverText_rect)
     # game_over_sound.play(loops=0,maxtime=0,fade_ms=0)
-    ########################
+    #### #### #### #### #### YUN SION's #### #### #### #### #### ####
 
-    ### EEJOY's CODES ###
-     # Brick 1
-
-    if draw_brick1:
-        draw_on_bg(brick, rect = brick_rect1)
-
-    if collidepoint_on_bg(mario_rect, brick_rect1.midbottom):
-        draw_brick1 = False
+    #### #### #### #### #### EEJOY's #### #### #### #### #### ####
+    # Draw the bricks and remove when collision is detected
+    draw_brick_rect(brick_rect1)
+    draw_brick_rect(brick_rect2)
+    draw_brick_rect(brick_rect3)
+    draw_brick_rect(brick_rect4)
+    draw_brick_rect(brick_rect5)
+    draw_brick_rect(brick_rect6)
+    draw_brick_rect(brick_rect7)
+    draw_brick_rect(brick_rect8)
+    draw_brick_rect(brick_rect9)
+    draw_brick_rect(brick_rect10)
+    draw_brick_rect(brick_rect11)
+    draw_brick_rect(brick_rect12)
+    draw_brick_rect(brick_rect13)
+    draw_brick_rect(brick_rect14)
+    draw_brick_rect(brick_rect15)
+    draw_brick_rect(brick_rect16)
+    draw_brick_rect(brick_rect17)
+    draw_brick_rect(brick_rect18)
+    draw_brick_rect(brick_rect19)
+    draw_brick_rect(brick_rect20)
+    draw_brick_rect(brick_rect21)
+    draw_brick_rect(brick_rect22)
+    draw_brick_rect(brick_rect23)
+    draw_brick_rect(brick_rect24)
+    draw_brick_rect(brick_rect25)
+    draw_brick_rect(brick_rect26)
+    draw_brick_rect(brick_rect27)
+    draw_brick_rect(brick_rect28)
+    draw_brick_rect(brick_rect29)
     
-    # Brick 2
-    if draw_brick2:
-        draw_on_bg(brick, rect = brick_rect2)
+    draw_on_bg(brick, rect = coin_brick_rect) # Coin brick
+    draw_on_bg(brick, rect = star_brick_rect) # Star brick
 
-    if collidepoint_on_bg(mario_rect, brick_rect2.midbottom):
-        draw_brick2 = False
-    
-    # Brick 3
-    if draw_brick3:
-        draw_on_bg(brick, rect = brick_rect3)
-
-    if collidepoint_on_bg(mario_rect, brick_rect3.midbottom):
-        draw_brick3 = False
-
-    # Brick 4
-    if draw_brick4:
-        draw_on_bg(brick, rect = brick_rect4)
-
-    if collidepoint_on_bg(mario_rect, brick_rect4.midbottom):
-        draw_brick4 = False
-
-    # Brick 5
-    if draw_brick5:
-        draw_on_bg(brick, rect = brick_rect5)
-
-    if collidepoint_on_bg(mario_rect, brick_rect5.midbottom):
-        draw_brick5 = False
-
-    # Brick 6
-    if draw_brick6:
-        draw_on_bg(brick, rect = brick_rect6)
-
-    if collidepoint_on_bg(mario_rect, brick_rect6.midbottom):
-        draw_brick6 = False
-
-    # Brick 7
-    if draw_brick7:
-        draw_on_bg(brick, rect = brick_rect7)
-
-    if collidepoint_on_bg(mario_rect, brick_rect7.midbottom):
-        draw_brick7 = False
-
-    # Brick 8
-    if draw_brick8:
-        draw_on_bg(brick, rect = brick_rect8)
-
-    if collidepoint_on_bg(mario_rect, brick_rect8.midbottom):
-        draw_brick8 = False
-    
-    # Brick 9
-    if draw_brick9:
-        draw_on_bg(brick, rect = brick_rect9)
-
-    if collidepoint_on_bg(mario_rect, brick_rect9.midbottom):
-        draw_brick9 = False
-
-    # Brick 10
-    if draw_brick10:
-        draw_on_bg(brick, rect = brick_rect10)
-
-    if collidepoint_on_bg(mario_rect, brick_rect10.midbottom):
-        draw_brick10 = False
-    
-    # Brick 11
-    if draw_brick11:
-        draw_on_bg(brick, rect = brick_rect11)
-
-    if collidepoint_on_bg(mario_rect, brick_rect11.midbottom):
-        draw_brick11 = False
-
-    # Brick 12
-    if draw_brick12:
-        draw_on_bg(brick, rect = brick_rect12)
-
-    if collidepoint_on_bg(mario_rect, brick_rect12.midbottom):
-        draw_brick12 = False
-    
-    # Brick 13
-    if draw_brick13:
-        draw_on_bg(brick, rect = brick_rect13)
-
-    if collidepoint_on_bg(mario_rect, brick_rect13.midbottom):
-        draw_brick13 = False
-
-    # Brick 14
-    if draw_brick14:
-        draw_on_bg(brick, rect = brick_rect14)
-
-    if collidepoint_on_bg(mario_rect, brick_rect14.midbottom):
-        draw_brick14 = False
-
-    # Brick 15
-    if draw_brick15:
-        draw_on_bg(brick, rect = brick_rect15)
-
-    if collidepoint_on_bg(mario_rect, brick_rect15.midbottom):
-        draw_brick15 = False
-
-    # Brick 16
-    if draw_brick16:
-        draw_on_bg(brick, rect = brick_rect16)
-
-    if collidepoint_on_bg(mario_rect, brick_rect16.midbottom):
-        draw_brick16 = False
-
-    # Brick 17
-    if draw_brick17:
-        draw_on_bg(brick, rect = brick_rect17)
-
-    if collidepoint_on_bg(mario_rect, brick_rect17.midbottom):
-        draw_brick17 = False
-
-    # Brick 18
-    if draw_brick18:
-        draw_on_bg(brick, rect = brick_rect18)
-
-    if collidepoint_on_bg(mario_rect, brick_rect18.midbottom):
-        draw_brick18 = False
-
-    # Brick 19
-    if draw_brick19:
-        draw_on_bg(brick, rect = brick_rect19)
-
-    if collidepoint_on_bg(mario_rect, brick_rect19.midbottom):
-        draw_brick19 = False
-
-    # Brick 20
-    if draw_brick20:
-        draw_on_bg(brick, rect = brick_rect20)
-
-    if collidepoint_on_bg(mario_rect, brick_rect20.midbottom):
-        draw_brick20 = False
-
-    # Brick 21
-    if draw_brick21:
-        draw_on_bg(brick, rect = brick_rect21)
-
-    if collidepoint_on_bg(mario_rect, brick_rect21.midbottom):
-        draw_brick21 = False
-
-    # Brick 22
-    if draw_brick22:
-        draw_on_bg(brick, rect = brick_rect22)
-
-    if collidepoint_on_bg(mario_rect, brick_rect22.midbottom):
-        draw_brick22 = False
-
-    # Brick 23
-    if draw_brick23:
-        draw_on_bg(brick, rect = brick_rect23)
-
-    if collidepoint_on_bg(mario_rect, brick_rect23.midbottom):
-        draw_brick23 = False
-
-    # Brick 24
-    if draw_brick24:
-        draw_on_bg(brick, rect = brick_rect24)
-
-    if collidepoint_on_bg(mario_rect, brick_rect24.midbottom):
-        draw_brick24 = False
-
-    # Brick 25
-    if draw_brick25:
-        draw_on_bg(brick, rect = brick_rect25)
-
-    if collidepoint_on_bg(mario_rect, brick_rect25.midbottom):
-        draw_brick25 = False
-
-    # Brick 26
-    if draw_brick26:
-        draw_on_bg(brick, rect = brick_rect26)
-
-    if collidepoint_on_bg(mario_rect, brick_rect26.midbottom):
-        draw_brick26 = False
-
-    # Brick 27
-    if draw_brick27:
-        draw_on_bg(brick, rect = brick_rect27)
-
-    if collidepoint_on_bg(mario_rect, brick_rect27.midbottom):
-        draw_brick27 = False
-
-    # Brick 28
-    if draw_brick28:
-        draw_on_bg(brick, rect = brick_rect28)
-
-    if collidepoint_on_bg(mario_rect, brick_rect28.midbottom):
-        draw_brick28 = False
-
-    # Brick 29
-    if draw_brick29:
-        draw_on_bg(brick, rect = brick_rect29)
-
-    if collidepoint_on_bg(mario_rect, brick_rect29.midbottom):
-        draw_brick29 = False
-    # COIN FLASH 
-    coin_count += 0.1
-    if coin_count >= 3:
-        coin_count = 0 
-    # # Draw bricks
-    # draw_on_bg(brick, (640, 272))
-    # draw_on_bg(brick, (704, 272))
-    # draw_on_bg(brick, (768, 272))
-    # draw_on_bg(brick, (2462, 272))
-    # draw_on_bg(brick, (2511, 272))
-    # draw_on_bg(brick, (2559, 144))
-    # draw_on_bg(brick, (2591, 144))
-    # draw_on_bg(brick, (2624, 144))
-    # draw_on_bg(brick, (2656, 144))
-    # draw_on_bg(brick, (2688, 144))
-    # draw_on_bg(brick, (2656, 144))
-    # draw_on_bg(brick, (2720, 144))
-    # # draw_on_bg(brick, (752, 144))
-    # draw_on_bg(brick, (2784, 144))
-    # draw_on_bg(brick, (2911, 144))
-    # draw_on_bg(brick, (2943, 144))
-    # draw_on_bg(brick, (2975, 144))
-    # draw_on_bg(brick, rect = coin_brick_rect) # Coin brick
-    # draw_on_bg(brick, (3199, 272))
-    # draw_on_bg(brick, rect = star_brick_rect) # Star brick
-    # draw_on_bg(brick, (3774, 272))
-    # draw_on_bg(brick, (3871, 144))
-    # draw_on_bg(brick, (3903, 144))
-    # draw_on_bg(brick, (3935, 144))
-    # draw_on_bg(brick, (4095, 144))
-    # draw_on_bg(brick, (4159, 144))
-    # draw_on_bg(brick, (4192, 144))
-    # draw_on_bg(brick, (4127, 272))
-    # draw_on_bg(brick, (4159, 272))
-    # draw_on_bg(brick, (5374, 272))
-    # draw_on_bg(brick, (5407, 272))
-    # draw_on_bg(brick, (5471, 272))
-    
     # Coin brick - draw coin
     if collidepoint_on_bg(mario_rect, coin_brick_rect.midbottom):
         count_coin += 1
@@ -423,18 +395,17 @@ while True:
             v = 5
             
     if draw_coin:
-        draw_on_bg(coin, rect = coin_rect)
+        draw_on_bg(coin, rect = coin_rect0)
 
         # Let the coin jump
         F = (1/2) * m * (v ** 2) 
-        # GJ
-        coin_rect.y -= F
-        v -= 0.2
+        coin_rect0.y -= F
+        v -= 0.1
         if v < 0:
             m = -1
 
-    if coin_rect.y > coin_brick_rect.y:
-        draw_coin1 = False
+    if coin_rect0.y > coin_brick_rect.y:
+        draw_coin = False
 
     # Star brick - draw star
     if collidepoint_on_bg(mario_rect, star_brick_rect.midbottom):
@@ -473,362 +444,94 @@ while True:
 
     if star_rect.top >= star_brick_rect.bottom and colliderect_on_bg(mario_rect, star_rect):
         draw_star = False
+        mario_state = 1
+        start_time = pygame.time.get_ticks()
+
+    # Question block flash
+    question_count += 0.1
+    if question_count >= 3:
+        question_count = 0 
 
     # Draw coin box
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect1)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect2)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect3)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect4)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect5)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect6)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect7)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect8)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect9)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect1)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect2)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect3)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect4)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect5)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect6)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect7)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect8)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect9)
 
-    # Coin 1
-    if collidepoint_on_bg(mario_rect, question_rect1.midbottom):
-        
-        count_coin1 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin1 == 1:
-            draw_empty_brick1 = True
-            draw_coin1 = True
-            m = 1
-            v = 5
-
-    if draw_coin1:
-        draw_on_bg(coin, rect = coin_rect1)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect1.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick1:
-        draw_on_bg(empty_brick, rect = question_rect1)
-
-    if coin_rect1.y > question_rect1.y:
-        draw_coin1 = False
-
-    # Coin 2
-    if collidepoint_on_bg(mario_rect, question_rect2.midbottom):
-        count_coin2 += 1
-        # Only draw coin for the first time of collision
-        if count_coin2 == 1:
-            draw_empty_brick2 = True
-            draw_coin2 = True
-            m = 1
-            v = 5
-
-    if draw_coin2:
-        draw_on_bg(coin, rect = coin_rect2)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect2.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick2:
-        draw_on_bg(empty_brick, rect = question_rect2)
-
-    if coin_rect2.y > question_rect2.y:
-        draw_coin2 = False
-        
-    # Coin 3
-    if collidepoint_on_bg(mario_rect, question_rect3.midbottom):
-        count_coin3 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin3 == 1:
-            draw_empty_brick3 = True
-            draw_coin3 = True
-            m = 1
-            v = 5
-
-    if draw_coin3:
-        draw_on_bg(coin, rect = coin_rect3)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect3.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-    
-    if draw_empty_brick3:
-        draw_on_bg(empty_brick, rect = question_rect3)
-
-    if coin_rect3.y > question_rect3.y:
-        draw_coin3 = False
-
-    # Coin 4
-    if collidepoint_on_bg(mario_rect, question_rect4.midbottom):
-        count_coin4 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin4 == 1:
-            draw_empty_brick4 = True
-            draw_coin4 = True
-            m = 1
-            v = 5
-            
-    if draw_coin4:
-        draw_on_bg(coin, rect = coin_rect4)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect4.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick4:
-        draw_on_bg(empty_brick, rect = question_rect4)
-
-    if coin_rect4.y > question_rect4.y:
-        draw_coin4 = False
-
-    # Coin 5  
-    if collidepoint_on_bg(mario_rect, question_rect5.midbottom):
-        count_coin5 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin5 == 1:
-            draw_empty_brick5 = True
-            draw_coin5 = True
-            m = 1
-            v = 5
-            
-    if draw_coin5:
-        draw_on_bg(coin, rect = coin_rect5)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect5.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick5:
-        draw_on_bg(empty_brick, rect = question_rect5)
-
-    if coin_rect5.y > question_rect5.y:
-        draw_coin5 = False
-
-    # Coin 6  
-    if collidepoint_on_bg(mario_rect, question_rect6.midbottom):
-        count_coin6 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin6 == 1:
-            draw_empty_brick6 = True
-            draw_coin6 = True
-            m = 1
-            v = 5
-            
-    if draw_coin6:
-        draw_on_bg(coin, rect = coin_rect6)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect6.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick6:
-        draw_on_bg(empty_brick, rect = question_rect6)
-
-    if coin_rect6.y > question_rect6.y:
-        draw_coin6 = False
-
-    # Coin 7
-    if collidepoint_on_bg(mario_rect, question_rect7.midbottom):
-        count_coin7 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin7 == 1:
-            draw_empty_brick7 = True
-            draw_coin7 = True
-            m = 1
-            v = 5
-            
-    if draw_coin7:
-        draw_on_bg(coin, rect = coin_rect7)
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect7.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick7:
-        draw_on_bg(empty_brick, rect = question_rect7)
-
-    if coin_rect7.y > question_rect7.y:
-        draw_coin7 = False
-
-    # Coin 8
-    if collidepoint_on_bg(mario_rect, question_rect8.midbottom):
-        count_coin8 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin8 == 1:
-            draw_empty_brick8 = True
-            draw_coin8 = True
-            m = 1
-            v = 5
-            
-    if draw_coin8:
-        draw_on_bg(coin, rect = coin_rect8)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect8.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick8:
-        draw_on_bg(empty_brick, rect = question_rect8)
-
-    if coin_rect8.y > question_rect8.y:
-        draw_coin8 = False
-
-    # Coin 9
-    if collidepoint_on_bg(mario_rect, question_rect9.midbottom):
-        count_coin9 += 1
-
-        # Only draw coin for the first time of collision
-        if count_coin9 == 1:
-            draw_empty_brick9 = True
-            draw_coin9 = True
-            m = 1
-            v = 5
-            
-    if draw_coin9:
-        draw_on_bg(coin, rect = coin_rect9)
-
-        # Let the coin jump
-        F = (1/2) * m * (v ** 2)
-        coin_rect9.y -= F
-        v -= 0.2
-        if v < 0:
-            m = -1
-
-    if draw_empty_brick9:
-        draw_on_bg(empty_brick, rect = question_rect9)
-
-    if coin_rect9.y > question_rect9.y:
-        draw_coin9 = False
+    draw_coin_rect(question_rect1, coin_rect1)
+    draw_coin_rect(question_rect2, coin_rect2)
+    draw_coin_rect(question_rect3, coin_rect3)
+    draw_coin_rect(question_rect4, coin_rect4)
+    draw_coin_rect(question_rect5, coin_rect5)
+    draw_coin_rect(question_rect6, coin_rect6)
+    draw_coin_rect(question_rect7, coin_rect7)
+    draw_coin_rect(question_rect8, coin_rect8)
+    draw_coin_rect(question_rect9, coin_rect9)
 
     # Draw mushroom box
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect10)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect11)
-    draw_on_bg(question_block[int(coin_count)], rect = question_rect12)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect10)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect11)
+    draw_on_bg(question_block[int(question_count)], rect = question_rect12)
 
-    # Mushroom 1
-    if collidepoint_on_bg(mario_rect, question_rect10.midbottom):
-        count_mushroom1 += 1
+    draw_mushroom_or_flower_rect(question_rect10, red_mushroom_rect1, flower_rect1)
+    draw_mushroom_or_flower_rect(question_rect11, red_mushroom_rect2, flower_rect2)
+    draw_mushroom_or_flower_rect(question_rect12, red_mushroom_rect3, flower_rect3)
+    # Small invincible flash
+    invincible_count += 0.09
+    if invincible_count >= 3:
+        invincible_count = 0
 
-        # Only draw coin for the first time of collision
-        if count_mushroom1 == 1:
-            draw_empty_brick10 = True
-            draw_mushroom1 = True
+    # ~ Display invincible only for 10 seconds
+    if start_time:
+        time_taken = pygame.time.get_ticks() - start_time
+        if time_taken >= 10000:
+            # play invincible music 
+            mario_state = 0
+            start_time = 0
 
-    if draw_mushroom1:
-        draw_on_bg(red_mushroom, rect = red_mushroom_rect1)
+    #### #### #### #### #### EEJOY's end #### #### #### #### #### ####
 
-        # Let the mushroom rise slowly
-        if red_mushroom_rect1.midbottom[1] >= question_rect10.midtop[1]:
-            red_mushroom_rect1.y -= 1
-
-    if draw_empty_brick10:
-        draw_on_bg(empty_brick, rect = question_rect10)
+    #### #### #### #### #### RAJA's #### #### #### #### #### ####
     
-
-    if (red_mushroom_rect1.bottom <= question_rect10.top) and (colliderect_on_bg(mario_rect, red_mushroom_rect1)):
-        draw_mushroom1 = False
-    
-    # Mushroom 2
-    if collidepoint_on_bg(mario_rect, question_rect11.midbottom):
-        count_mushroom2 += 1
-
-        # Only draw coin for the first time of collision
-        if count_mushroom2 == 1:
-            draw_empty_brick11 = True
-            draw_mushroom2 = True
-
-    if draw_mushroom2:
-        draw_on_bg(red_mushroom, rect = red_mushroom_rect2)
-
-        # Let the mushroom rise slowly
-        if red_mushroom_rect2.midbottom != question_rect11.midtop:
-            red_mushroom_rect2.y -= 3
-
-    if draw_empty_brick11:
-        draw_on_bg(empty_brick, rect = question_rect11)
-
-    if mario_rect.colliderect(red_mushroom_rect2):
-        draw_mushroom2 = False
-
-    # Mushroom 3
-    if collidepoint_on_bg(mario_rect, question_rect12.midbottom):
-        count_mushroom3 += 1
-
-        # Only draw coin for the first time of collision
-        if count_mushroom3 == 1:
-            draw_empty_brick12 = True
-            draw_mushroom3 = True
-
-    if draw_mushroom3:
-        draw_on_bg(red_mushroom, rect = red_mushroom_rect3)
-
-        # Let the mushroom rise slowly
-        if red_mushroom_rect3.midbottom != question_rect12.midtop:
-            red_mushroom_rect3.y -= 3
-
-    if draw_empty_brick12:
-        draw_on_bg(empty_brick, rect = question_rect12)
-
-    if mario_rect.colliderect(red_mushroom_rect3):
-        draw_mushroom3 = False
-
-    ####################################################
-    ### RAJA's ###
-    #mario move and jump
-    # while True:
+    # ~ MOVE and JUMP 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if mario_dead == False:
+            if event.type == pygame.KEYDOWN:         
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
+                    moving_right = True
+                    moving_left = False  
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
+                    moving_left = True
+                    moving_right = False
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    if on_ground == True: #makes it run only once 
+                        on_ground = False
+                        jump = True
 
-        if event.type == pygame.KEYDOWN:         
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
-                moving_right = True
-                moving_left = False  
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
-                moving_left = True
-                moving_right = False
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                if on_ground == True: #makes it run only once 
-                    on_ground = False
-                    jump = True
+        # ~ DISABLE MOVE/JUMP 
+            if event.type == pygame.KEYUP:  
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    moving_right = False
+                    mario_count = 4
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    moving_left = False
+                    mario_count = 4
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    jump = False
+        if mario_dead == True:
+            moving_right = False
+            moving_left = False
+            mario_count = 4
+            jump = False
 
-        if event.type == pygame.KEYUP:  
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                moving_right = False
-                mario_count = 4
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                moving_left = False
-                mario_count = 4
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                jump = False
-    
+    # ~ JUMP's logic 
     if jump == True:
         mario_count = 5
         velocity_y = 6
@@ -849,9 +552,10 @@ while True:
                     mario_count = 0 
             else:
                 mario_count = 4
+    
+    check_collisonsy() # check vertical collision immediately so mario don't jump thru blocks, or go thru floors.
 
-    check_collisonsy() 
-
+    # WALK's logics
     if moving_right == True:
         direction = facing_right 
         if bg_x_pos > bgLimit:                   #logic to stop when limit is reached
@@ -859,24 +563,40 @@ while True:
                 mario_rect.x += velocity_x
             else:
                 bg_x_pos -= velocity_x          #after reaching the middle, background will move
+        else: #mario reaches the end
+            mario_rect.x += velocity_x 
 
     if moving_left == True:
-        direction = facing_left
+        direction = facing_left 
         if mario_rect.x >= 0:
             mario_rect.x -= velocity_x
-    check_collisonsx()
 
-    if on_ground == False:
-        mario_count = 5
-    
+    check_collisonsx() # check horizontal collision immediately so mario don't walk past rects like Pipes
 
-    if direction == -1:
-        screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
-    elif direction == 0:
-        screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
+    # ~ JUMP and WALK animation 
+    # ~ Play invincible if mario_state = 1
+
+    if mario_dead == False:
+        if on_ground == False:
+            mario_count = 5
+        if direction == -1:
+            if mario_state == 0:
+                screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+        elif direction == 0:
+            if mario_state == 0:
+                screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+        else:
+            if mario_state == 0:
+                screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_state == 1:
+                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
     else:
-        screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
-    ####################################################
-    pygame.display.update()                        #update screen
-    clock.tick(60)                                 #limit our game to 60 fps no matter what
+        screen.blit(mario_died_pic,(mario_died_x, mario_died_y))
+    #### #### #### #### #### RAJA's end #### #### #### #### #### ####
 
+    pygame.display.update()  #update screen
+    clock.tick(60)  #limit our game to 60 fps no matter what
