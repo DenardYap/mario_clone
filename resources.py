@@ -66,6 +66,24 @@ goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
 goomba_death_ani = pygame.image.load("./static_images/goomba_died.png")
 
 enemy_list = [goomba_hitbox]
+goomba1 = goomba_animation_list[0].get_rect(topleft = (345, 368))
+goomba2 = goomba_animation_list[0].get_rect(topleft = (633, 368))
+goomba3 = goomba_animation_list[0].get_rect(topleft = (809, 368))
+goomba4 = goomba_animation_list[0].get_rect(topleft = (832, 368))
+goomba5 = goomba_animation_list[0].get_rect(topleft = (1273, 368))
+goomba6 = goomba_animation_list[0].get_rect(topleft = (1304, 368))
+goomba7 = goomba_animation_list[0].get_rect(topleft = (1545, 368))
+# turtle = (1705, 368)
+goomba8 = goomba_animation_list[0].get_rect(topleft = (1568, 368))
+goomba9 = goomba_animation_list[0].get_rect(topleft = (1817, 368))
+goomba10 = goomba_animation_list[0].get_rect(topleft = (1840, 368))
+goomba11 = goomba_animation_list[0].get_rect(topleft = (1977, 368))
+goomba12 = goomba_animation_list[0].get_rect(topleft = (2000, 368))
+goomba13 = goomba_animation_list[0].get_rect(topleft = (2041, 368))
+goomba14 = goomba_animation_list[0].get_rect(topleft = (2065, 368))
+goomba15 = goomba_animation_list[0].get_rect(topleft = (2777, 368))
+goomba16 = goomba_animation_list[0].get_rect(topleft = (2888, 368))
+
 #############
 
 ### EEJOY's ### 
