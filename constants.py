@@ -77,3 +77,8 @@ coins_value = 0
 world_value = "1-1"
 time_value = 400
 lives_value = 3
+
+#sounds
+main_theme_play = False
+main_theme_fastvers = False
+invincible__music = False
