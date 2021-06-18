@@ -278,5 +278,17 @@ marioflip = []
 for i,animation in enumerate(animation_list):
     marioflip.append(pygame.transform.flip((animation_list[i]), True, False))
 
-
+#sounds
+big_jump_sound = pygame.mixer.Sound('sounds/big_jump.ogg')
+small_jump_sound = pygame.mixer.Sound('sounds/small_jump.ogg')
+small_jump_sound.set_volume(0.5)
+mario_dead = pygame.mixer.Sound('music/dead.wav')
+main_theme_speedup = pygame.mixer.Sound('music/main_theme_speed_up.ogg')
+brick_smash_sound = pygame.mixer.Sound('sounds/brick_smash.ogg')
+bump_sound = pygame.mixer.Sound('sounds/bump.ogg')
+coin_sound = pygame.mixer.Sound('sounds/coin.ogg')
+powerup_pop_sound = pygame.mixer.Sound('sounds/powerup_pop.ogg')
+powerup_eat_sound = pygame.mixer.Sound('sounds/powerup_eat.ogg')
+mario_kick_sound = pygame.mixer.Sound('sounds/kick.ogg')
+invincible_music = pygame.mixer.Sound('music/invincible.ogg')
 
