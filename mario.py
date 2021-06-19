@@ -433,6 +433,7 @@ while True:
         # Only draw coin for the first time of collision
         if count_coin == 1:
             draw_coin = True
+            coin_sound.play()
             m = 1
             v = 5
             
