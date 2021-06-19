@@ -282,7 +282,6 @@ for i,animation in enumerate(animation_list):
 big_jump_sound = pygame.mixer.Sound('sounds/big_jump.ogg')
 small_jump_sound = pygame.mixer.Sound('sounds/small_jump.ogg')
 small_jump_sound.set_volume(0.5)
-mario_dead = pygame.mixer.Sound('music/dead.wav')
 main_theme_speedup = pygame.mixer.Sound('music/main_theme_speed_up.ogg')
 brick_smash_sound = pygame.mixer.Sound('sounds/brick_smash.ogg')
 bump_sound = pygame.mixer.Sound('sounds/bump.ogg')
