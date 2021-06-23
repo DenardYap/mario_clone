@@ -24,6 +24,7 @@ pygame.init()
 screen = pygame.display.set_mode((screenW,screenH))
 clock = pygame.time.Clock()
 time_ticks = pygame.time.get_ticks() # Use to countdown timer on top
+TARGET_FPS = 60
 
 # function to draw the floors, total of 4 floors 
 def draw_floor():
@@ -43,19 +44,6 @@ def draw_on_bg(pic, xy = (0,0), rect=False):
     else:
         screen.blit(pic, (bg_x_pos + rect.x, rect.y))
     
-# detect collidepoint while the rect is stick to the background
-# without this function the rects will just move along with mario
-def collidepoint_on_bg(bully, victim):
-    # use this function instead of collidepoint
-    # as we need to detect rects that are sticked
-    # to the background image
-    """
-    bully: a rect (mario)
-    victim: a rect (kooba, goomba, etc?) with any reference point (midbottom, center, etc)
-            reference point must be a tuple of (x,y)
-    """
-    return bully.collidepoint((bg_x_pos + victim[0], victim[1]))
-
 # detect colliderect while the rect is stick to the background
 # without this function the rects will just move along with mario
 def colliderect_on_bg(bully, victim):
@@ -64,11 +52,35 @@ def colliderect_on_bg(bully, victim):
     temp_victim.x += bg_x_pos 
     return bully.colliderect(temp_victim)
 
-# check mario's horizontal collision, if detected, stop mario from moving
+# detect collision from the bottom only while the rect is stick to the background
+# without this function the rects will just move along with mario
+def colliderect_on_bg_bottom(bully, victim):
+    # use this function instead of collidepoint
+    # as we need to detect rects that are sticked
+    # to the background image
+    """
+    bully: a rect (mario)
+    victim: a rect (kooba, goomba, etc?) with any reference point (midbottom, center, etc)
+            reference point must be a tuple of (x,y)
+    """
+    temp_victim = copy(victim) 
+    temp_victim.x += bg_x_pos 
+    if bully.colliderect(temp_victim):
+        # mario is below the victim and not falling down
+        if bully.top <= temp_victim.bottom and mario_m > 0:
+            return True
+    return False
+    # return bully.collidepoint((bg_x_pos + victim[0], victim[1]))
+
+# check mario's horizontal collision, if detected, stop mario from maaaaaoving
 def check_collisonsx():
     global mario_rect
     global hit_box_list
     global mario_count
+    global acceleration_x
+    global velocity_x
+    global skied_left
+    global skied_right
     """
     enemy: False is victim is not enemy, True if victim is enemy
     - Therefore we can let mario dies if he hits an enemy instead of wall
@@ -81,12 +93,14 @@ def check_collisonsx():
         temp_hit_box.x += bg_x_pos
         if mario_rect.colliderect(temp_hit_box):
             if abs(mario_rect.top - temp_hit_box.bottom) > 5:
-                if moving_right == True:
-                    mario_rect.x = temp_hit_box.left - mario_rect.w
-                    mario_count = 4     
-                elif moving_left == True:
-                    mario_rect.x = temp_hit_box.right
-                    mario_count = 4
+                if moving_left == True or skied_left == False:
+                    if skied_right == True:
+                        mario_rect.x = temp_hit_box.right
+                        mario_count = 4
+                if moving_right == True or skied_right == False:
+                    if skied_left == True:
+                        mario_rect.x = temp_hit_box.left - mario_rect.w
+                        mario_count = 4     
 
 # check mario's vertical collision, if detected, stop mario from going up or down
 def check_collisonsy():
@@ -95,6 +109,7 @@ def check_collisonsy():
     global jump
     global default_on_ground_y
     global on_ground
+    global velocity_y
     """
     enemy: False is victim is not enemy, True if victim is enemy
     - Therefore we can let mario dies if he hits an enemy instead of wall
@@ -103,9 +118,10 @@ def check_collisonsy():
         temp_hit_box = copy(hit_box)
         temp_hit_box.x += bg_x_pos
         if mario_rect.colliderect(temp_hit_box):
-            if velocity_y > 0: #mario is jumping up 
+            if mario_m > 0: #mario is jumping up 
                 jump = False
-            elif velocity_y < 0: #mario is jumping down 
+            elif mario_m < 0: #mario is jumping down 
+                velocity_y = 6
                 default_on_ground_y = temp_hit_box.top
                 mario_rect.bottom =  default_on_ground_y 
                 on_ground = True
@@ -118,10 +134,12 @@ def check_collisonsy():
 # ~ can already tell what they do from then func names
 
 def draw_brick_rect(brick_rect):
-    if collidepoint_on_bg(mario_rect, brick_rect.midbottom):
+    if colliderect_on_bg_bottom(mario_rect, brick_rect):
+        if brick_rect not in remove_brick_list:
+            brick_smash_sound.play()
         remove_brick_list.append(brick_rect) #Reverse, works
         remove_brick_rect(brick_rect) #remove the rect
-    
+
     if brick_rect not in remove_brick_list: #don't draw if it's collided
         draw_on_bg(brick, rect = brick_rect)
 
@@ -135,7 +153,7 @@ def draw_empty_brick_rect(question_rect):
         draw_on_bg(empty_brick, rect = question_rect)
 
 def draw_coin_rect(question_rect, coin_rect):
-    if collidepoint_on_bg(mario_rect, question_rect.midbottom):
+    if colliderect_on_bg_bottom(mario_rect, question_rect):
         remove_coin_list.append(coin_rect)
         empty_brick_list.append(question_rect)
         
@@ -149,6 +167,8 @@ def coin_jump(coin_rect, question_rect):
     global m
     global v
 
+    if coin_rect.y == question_rect.y:
+        coin_sound.play()
     if not coin_rect.y > question_rect.y:
         F = (1/2) * m * (v ** 2)
         coin_rect.y -= F
@@ -166,7 +186,7 @@ def remove_coin_rect(coin_rect):
             remove_coin_list.remove(coin_rect)
     
 def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
-    if collidepoint_on_bg(mario_rect, question_rect.midbottom):
+    if colliderect_on_bg_bottom(mario_rect, question_rect):
         empty_brick_list.append(question_rect)
         if mario_size == 0:
             remove_mushroom_list.append(red_mushroom_rect)
@@ -191,6 +211,8 @@ def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
     draw_empty_brick_rect(question_rect)
 
 def mushroom_flower_rise(mushroom_flower_rect, question_rect):
+    if (question_rect.top - mushroom_flower_rect.top) == 2:
+        powerup_pop_sound.play()
     if ((mushroom_flower_rect.midbottom[1] >= question_rect.midtop[1]) and 
        not(mushroom_flower_rect.bottom <= question_rect.top)):
         mushroom_flower_rect.y -= 1
@@ -201,11 +223,13 @@ def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
         for mushroom in remove_mushroom_list:
             if mushroom == red_mushroom_rect:
                 remove_mushroom_list.remove(red_mushroom_rect)
+                powerup_eat_sound.play()
                 mario_size = 1
     if colliderect_on_bg(mario_rect, flower_rect):
         for flower in remove_flower_list:
             if flower == flower_rect:
                 remove_flower_list.remove(flower_rect)
+                powerup_eat_sound.play()
 
 #### #### #### #### #### EEJOY's end #### #### #### #### #### ####
 
@@ -251,14 +275,116 @@ def check_pole():
         elif mario_rect.y <= 368:
             score_value += 100 
 
-while True:
+#bg_music_check
+def mario_bg_music():
+    global main_theme_play
+    global main_theme_fastvers
+    seconds=(pygame.time.get_ticks()-time_ticks)/600
+    if mario_dead == False:
+        if mario_state == 0:
+            if (time_value - int(seconds)) > 100:
+                if main_theme_play == False:
+                    main_theme_play = True
+                    main_theme_song.play()
+            else:
+                main_theme_play = False
+                main_theme_song.stop()
+                if main_theme_fastvers == False:
+                    main_theme_fastvers = True
+                    main_theme_speedup.play()
+        else:
+            main_theme_play = False
+            main_theme_fastvers = False
+            main_theme_song.stop()
+            main_theme_speedup.stop()
+    if mario_dead == True:
+        if main_theme_play == True:
+            main_theme_play = False
+            main_theme_song.stop()
+        if main_theme_fastvers == True:
+            main_theme_fastvers = False
+            main_theme_speedup.stop()
 
+def limit_speed(dir = 0):
+    global acceleration_x
+    global acceleration_vx 
+    global velocity_x
+    
+    if dir == 0: #left
+        if acceleration_x <= -maximum_acceleration_x:
+            acceleration_x = -maximum_acceleration_x
+        else:
+            acceleration_x-= acceleration_vx 
+        if velocity_x >= maximum_velocity:
+            velocity_x = maximum_velocity
+        else:
+            velocity_x -= acceleration_x * delta_time
+    elif dir == 1: #right
+        if acceleration_x >= maximum_acceleration_x:
+            acceleration_x = maximum_acceleration_x
+        else:
+            acceleration_x += acceleration_vx 
+        if velocity_x >= maximum_velocity:
+            velocity_x = maximum_velocity
+        else:
+            velocity_x += acceleration_x * delta_time
+
+def skiing_effect_left():
+    global velocity_x
+    global skied_left 
+    global mario_rect
+    global acceleration_x 
+
+    if acceleration_x < 0:
+        if velocity_x > 0: 
+            velocity_x += (acceleration_x * delta_time)/4
+            # positive += negative = negative
+        else:
+            velocity_x = 0
+        acceleration_x += ski_acceleration
+        mario_rect.x -= abs(velocity_x + 0.5*acceleration_x*(delta_time*delta_time)) 
+
+    else:
+        acceleration_x = 0
+        velocity_x = 0
+        skied_left = True
+    
+def skiing_effect_right():
+    global velocity_x
+    global bg_x_pos
+    global skied_right
+    global mario_rect
+    global acceleration_x 
+
+    if acceleration_x > 0:
+        if velocity_x > 0: 
+            velocity_x -= (acceleration_x * delta_time)/4
+            #positive -= positive = negative
+        else:
+            velocity_x = 0
+        acceleration_x -= ski_acceleration
+        if mario_rect.x < (575 - marioW):     #limit mario's movement to before the mid sectiond
+            # d = vt + 1/2 at^2
+            how_far_it_goes = abs(velocity_x + 0.5*acceleration_x*(delta_time*delta_time)) 
+            if how_far_it_goes < 1: 
+                how_far_it_goes = 1
+            mario_rect.x += how_far_it_goes
+        else:
+            bg_x_pos -= abs(velocity_x + 0.5*acceleration_x *(delta_time*delta_time)) 
+
+    else:
+        acceleration_x = 0
+        velocity_x = 0
+        skied_right = True
+        
+while True:
     check_pole() # TBD
     # The floors for mario to stand on
     draw_floor() #draw the floor before the BG 
     screen.blit(bg, (bg_x_pos,0)) #draw BG 
     draw_on_bg(pole, rect = pole_rect)
     draw_on_bg(pole_ball, pole_ball_co)
+    mario_bg_music()
 
     # ~ Mario dead logic 
     if mario_dead == False:
@@ -330,12 +456,15 @@ while True:
         # add a delay to dissapear the dead goomba 
     # check collsion
     if (colliderect_on_bg(mario_rect, goomba_hitbox) and (on_ground == False)) == True:
+        if goomba_alive == True:
+            mario_kick_sound.play()
         goomba_alive = False
     elif (colliderect_on_bg(mario_rect, goomba_hitbox) and goomba_alive) == True:
         if mario_state != 1:
             mario_dead = True
             # sys.exit()
-
+    if mario_rect.y >= 448:
+        mario_dead = True
     #### #### #### #### #### BEN's end #### #### #### #### #### ####
 
     #### #### #### #### #### YUN SION's #### #### #### #### #### ####
@@ -385,11 +514,12 @@ while True:
     draw_on_bg(brick, rect = star_brick_rect) # Star brick
 
     # Coin brick - draw coin
-    if collidepoint_on_bg(mario_rect, coin_brick_rect.midbottom):
+    if colliderect_on_bg_bottom(mario_rect, coin_brick_rect):
         count_coin += 1
 
         # Only draw coin for the first time of collision
-        if count_coin == 1:
+        if count_coin == 1:            
+            coin_sound.play()
             draw_coin = True
             m = 1
             v = 5
@@ -408,7 +538,7 @@ while True:
         draw_coin = False
 
     # Star brick - draw star
-    if collidepoint_on_bg(mario_rect, star_brick_rect.midbottom):
+    if colliderect_on_bg_bottom(mario_rect, star_brick_rect):
         count_star += 1
 
         # Only draw coin for the first time of collision
@@ -446,6 +576,9 @@ while True:
         draw_star = False
         mario_state = 1
         start_time = pygame.time.get_ticks()
+        if invincible__music == False:
+            invincible__music = True
+            invincible_music.play()
 
     # Question block flash
     question_count += 0.1
@@ -482,7 +615,7 @@ while True:
     draw_mushroom_or_flower_rect(question_rect11, red_mushroom_rect2, flower_rect2)
     draw_mushroom_or_flower_rect(question_rect12, red_mushroom_rect3, flower_rect3)
     # Small invincible flash
-    invincible_count += 0.09
+    invincible_count += 0.1
     if invincible_count >= 3:
         invincible_count = 0
 
@@ -490,7 +623,9 @@ while True:
     if start_time:
         time_taken = pygame.time.get_ticks() - start_time
         if time_taken >= 10000:
-            # play invincible music 
+            if invincible__music == True:
+                invincible__music = False
+                invincible_music.stop() 
             mario_state = 0
             start_time = 0
 
@@ -506,48 +641,84 @@ while True:
             if event.type == pygame.KEYDOWN:         
                 if event.key == pygame.K_d or event.key == pygame.K_RIGHT: 
                     moving_right = True
-                    moving_left = False  
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT: 
+                    # in case player press left and then press right 
+                    # without letting go the left key 
+                    if moving_left == True:
+                        skied_left = False
+                        moving_left = False  
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT: 
                     moving_left = True
-                    moving_right = False
+                    # in case player press right and then press left 
+                    # without letting go the right key 
+                    if moving_right == True:
+                        skied_right = False
+                        moving_right = False
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     if on_ground == True: #makes it run only once 
                         on_ground = False
                         jump = True
+                if event.key == pygame.K_LSHIFT:
+                    maximum_velocity = 5 #increase velocity
 
         # ~ DISABLE MOVE/JUMP 
             if event.type == pygame.KEYUP:  
                 if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    moving_right = False
-                    mario_count = 4
+                    if moving_right == True:
+                        skied_right = False
+                        moving_right = False
                 if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    moving_left = False
-                    mario_count = 4
+                    if moving_left == True:
+                        skied_left = False
+                        moving_left = False
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     jump = False
-        if mario_dead == True:
-            moving_right = False
-            moving_left = False
-            mario_count = 4
-            jump = False
+                if event.key == pygame.K_LSHIFT:
+                    maximum_velocity = 3 #increase velocity
+
+    if mario_dead == True:
+        # disable control after dead
+        moving_right = False
+        moving_left = False
+        mario_count = 4
+        jump = False
 
     # ~ JUMP's logic 
     if jump == True:
         mario_count = 5
-        velocity_y = 6
-        if mario_rect.top > bglimitH:
-            mario_rect.y -= velocity_y #goes up 
-            if mario_rect.bottom <= (default_on_ground_y - JUMP_HEIGHT):
-                mario_rect.bottom = default_on_ground_y - JUMP_HEIGHT
-                jump = False
-        else:
+        # ~ Give mario gravity 
+        mario_m = 0.5
+        if mario_rect.bottom == default_on_ground_y:
+            small_jump_sound.play()
+        if mario_rect.bottom > default_on_ground_y - JUMP_HEIGHT:
+            F = 0.5 * mario_m * (velocity_y ** 2)
+            if velocity_y > 0:
+                velocity_y -= 0.13
+            else:
+                velocity_y = 0
+        mario_rect.y -= F #goes up 
+        # # # # # # # # # # # # # 
+        if mario_rect.bottom <= (default_on_ground_y - JUMP_HEIGHT):
+            mario_rect.bottom = default_on_ground_y - JUMP_HEIGHT
+            velocity_y = 1.3
             jump = False
     else:
-        velocity_y = -6
-        mario_rect.y -= velocity_y #goes down
+        # if on_ground == False:
+        #     if velocity_y >= 0:
+        #         small_jump_sound.play()
+        mario_m = -0.5
+        F = 0.5 * mario_m * (velocity_y ** 2)
+        if velocity_y < 6:
+            velocity_y += 0.13
+            if velocity_y == 6:
+                velocity_y = 6.1
+            # increase velocity to 6 
+        elif velocity_y == 6:
+            velocity_y = 3
+
+        mario_rect.y -= F #goes down
         if on_ground:
             if moving_left or moving_right == True:
-                mario_count += 0.09
+                mario_count += 0.1
                 if mario_count >= 4:
                     mario_count = 0 
             else:
@@ -556,26 +727,41 @@ while True:
     check_collisonsy() # check vertical collision immediately so mario don't jump thru blocks, or go thru floors.
 
     # WALK's logics
+    
+    # Happened when mario done walking 
+    # or change direction immediately
+
+    # ~ Skiing effects! 
+    if mario_dead == False:
+        # dont ski if died lol
+        if skied_right == False:
+            skiing_effect_right() 
+        if skied_left == False:
+            skiing_effect_left() 
+
     if moving_right == True:
         direction = facing_right 
         if bg_x_pos > bgLimit:                   #logic to stop when limit is reached
-            if mario_rect.x < (575 - marioW):     #limit mario's movement to before the mid section
-                mario_rect.x += velocity_x
+            limit_speed(1)  
+                
+            if mario_rect.x < (575 - marioW):     #limit mario's movement to before the mid sectiond
+                # d = vt + 1/2 at^2
+                mario_rect.x += velocity_x + (0.5 * acceleration_x * (delta_time**2))
             else:
-                bg_x_pos -= velocity_x          #after reaching the middle, background will move
+                bg_x_pos -= velocity_x + (0.5 * acceleration_x * (delta_time**2))          #after reaching the middle, background will move
         else: #mario reaches the end
-            mario_rect.x += velocity_x 
+            limit_speed(1)  
+            mario_rect.x += velocity_x + (0.5 * acceleration_x * (delta_time**2)) 
 
-    if moving_left == True:
+    elif moving_left == True:
         direction = facing_left 
         if mario_rect.x >= 0:
-            mario_rect.x -= velocity_x
-
+            limit_speed(0)  
+            mario_rect.x -= velocity_x + (0.5 * acceleration_x * (delta_time**2))
     check_collisonsx() # check horizontal collision immediately so mario don't walk past rects like Pipes
 
     # ~ JUMP and WALK animation 
     # ~ Play invincible if mario_state = 1
-
     if mario_dead == False:
         if on_ground == False:
             mario_count = 5
@@ -584,11 +770,6 @@ while True:
                 screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
             elif mario_state == 1:
                 screen.blit(small_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
-        elif direction == 0:
-            if mario_state == 0:
-                screen.blit(animation_list[4], (mario_rect.x,mario_rect.y))
-            elif mario_state == 1:
-                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
         else:
             if mario_state == 0:
                 screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
@@ -599,4 +780,5 @@ while True:
     #### #### #### #### #### RAJA's end #### #### #### #### #### ####
 
     pygame.display.update()  #update screen
-    clock.tick(60)  #limit our game to 60 fps no matter what
+    # Friction
+    delta_time = clock.tick(TARGET_FPS) * 0.001 * TARGET_FPS  #clock.tick(FPS) limit our game to 60 fps no matter what
