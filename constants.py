@@ -64,8 +64,8 @@ moving_left = False
 mario_count = 0
 jump = False
 jumpspeed = 10
-velocity_x = 7
-velocity_y = 5
+velocity_x = 0
+velocity_y = 6
 direction = 0
 facing_right = 1
 facing_left = -1
@@ -77,3 +77,19 @@ coins_value = 0
 world_value = "1-1"
 time_value = 400
 lives_value = 3
+
+#sounds
+main_theme_play = False
+main_theme_fastvers = False
+invincible__music = False
+
+# Bernard
+acceleration_x = 0
+acceleration_vx = 0.025 # v for value
+ski_acceleration = 0.04 # PERFECT VALUE!!
+maximum_acceleration_x = 1 # counterintuitve to newton's law lol
+maximum_velocity = 3
+skied_left = True
+skied_right = True
+# F = 1/2 mv^2
+mario_m = -0.5
