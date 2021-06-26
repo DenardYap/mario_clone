@@ -9,6 +9,6 @@ First wave
 
 Second Wave
 1) Eejoy: Make the bricks destroyable when mario jumps on them (don't care small or big mario first), also makes the star bounce around 
-2) Naz: Make the end game pole scene, the higher Mario goes the higher the scores, after that, do the poll animation and play the poll music
+2) Naz: Make the end game pole scene, the higher Mario goes the higher the scores, after that, do the poll animation and play the poll music. Make disabled control logic.
 3) Ben: Spawn enemy and make them only start walking when they are inside the screen (within Mario's "vision"), tips: make them only move when their coordinates are <= 1000
 4) Yun Sion: When Mario touches the enemy (not just goomba but also koopa) Mario changes to dead animation, jumps up in the sky and then falls down out of the screen, then game over
