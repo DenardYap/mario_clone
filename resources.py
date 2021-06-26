@@ -14,8 +14,8 @@ mario = pygame.image.load("static_images/mario.png")
 mario_rect = mario.get_rect(topleft = (40, 368))
 
 #pole
-pole = pygame.image.load("static_images/pole.png")
-pole_ball = pygame.image.load("static_images/pole_ball.png")
+pole = pygame.image.load("static_images/pole.jpeg")
+pole_ball = pygame.image.load("static_images/poleball.png")
 pole_ball_co = (6341, 77)
 pole_rect = pole.get_rect(bottomleft = (6347, 368))
 #fonts
@@ -261,13 +261,13 @@ flower_rect3 = flower[0].get_rect(topleft = (3486, 142))
 # Import small invincible
 a = [pygame.image.load("animate_images/small_invincible1_0.png"), pygame.image.load("animate_images/small_invincible2_0.png"), 
     pygame.image.load("animate_images/small_invincible3_0.png"), pygame.image.load("animate_images/small_invincible2_0.png"),
-    pygame.image.load("animate_images/small_invincible0_0.png"), pygame.image.load("animate_images/small_invincible_jump0_0.png")]
+    pygame.image.load("animate_images/small_invincible0_0.png"), pygame.image.load("animate_images/small_invincible0_0.png")]
 b = [pygame.image.load("animate_images/small_invincible1_1.png"), pygame.image.load("animate_images/small_invincible2_1.png"), 
     pygame.image.load("animate_images/small_invincible3_1.png"), pygame.image.load("animate_images/small_invincible2_1.png"),
-    pygame.image.load("animate_images/small_invincible0_1.png"), pygame.image.load("animate_images/small_invincible_jump0_1.png")]
+    pygame.image.load("animate_images/small_invincible0_1.png"), pygame.image.load("animate_images/small_invincible0_1.png")]
 c = [pygame.image.load("animate_images/small_invincible1_2.png"), pygame.image.load("animate_images/small_invincible2_2.png"), 
     pygame.image.load("animate_images/small_invincible3_2.png"), pygame.image.load("animate_images/small_invincible2_2.png"),
-    pygame.image.load("animate_images/small_invincible0_2.png"), pygame.image.load("animate_images/small_invincible_jump0_2.png")]
+    pygame.image.load("animate_images/small_invincible0_2.png"), pygame.image.load("animate_images/small_invincible0_2.png")]
 
 small_invincible_list = [a, b, c]
 

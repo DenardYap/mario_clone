@@ -52,6 +52,25 @@ start_time = 0
 goomba_alive = True
 goomba_animation_i = 0
 
+goomba1_alive = True
+goomba2_alive = True
+goomba3_alive = True
+goomba4_alive = True
+goomba5_alive = True
+goomba6_alive = True
+goomba7_alive = True
+goomba8_alive = True
+goomba9_alive = True
+goomba10_alive = True
+goomba11_alive = True
+goomba12_alive = True
+goomba13_alive = True
+goomba14_alive = True
+goomba15_alive = True
+goomba16_alive = True
+
+enemy_list_alive = [goomba1_alive, goomba2_alive, goomba3_alive, goomba4_alive, goomba5_alive, goomba6_alive, goomba7_alive, goomba8_alive, goomba9_alive, goomba10_alive, goomba11_alive, goomba12_alive, goomba13_alive, goomba14_alive, goomba15_alive, goomba16_alive]
+
 ##Darshini's##
 BASE = 368 #mario default landing point = floor
 x_pos = 50

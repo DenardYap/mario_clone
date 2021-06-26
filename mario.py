@@ -314,29 +314,29 @@ while True:
 
     #### #### #### #### #### BEN's #### #### #### #### #### ####
     # goomba move
-    for goomba_i in enemy_list:
+    for i, goomba_i in enumerate(enemy_list):
         # need to change goomba_alive to goomba_i.alive
-        if (goomba_alive == True) and (abs(goomba_hitbox.x - abs(bg_x_pos)) <= 800):
-            goomba_hitbox.x -= 1
+        if (enemy_list_alive[i] == True) and (abs(goomba_i.x - abs(bg_x_pos)) <= 1000):
+            goomba_i.x -= 1
 
-    # goomba animation
-    goomba_animation_i += 0.1
-    if goomba_animation_i >= 2:
-        goomba_animation_i = 0
+        # goomba animation
+        goomba_animation_i += 0.1
+        if goomba_animation_i >= 2:
+            goomba_animation_i = 0
 
-    # goomba render
-    if goomba_alive == True:
-        draw_on_bg(goomba_animation_list[int(goomba_animation_i)], rect = goomba_hitbox)
-    else:
-        draw_on_bg(goomba_death_ani, (goomba_hitbox.x, (goomba_hitbox.y + int(goomba_hitbox.height / 2))))
-        # add a delay to dissapear the dead goomba 
-    # check collsion
-    if (colliderect_on_bg(mario_rect, goomba_hitbox) and (on_ground == False)) == True:
-        goomba_alive = False
-    elif (colliderect_on_bg(mario_rect, goomba_hitbox) and goomba_alive) == True:
-        if mario_state != 1:
-            mario_dead = True
-            # sys.exit()
+        # goomba render
+        if enemy_list_alive[i] == True:
+            draw_on_bg(goomba_animation_list[int(goomba_animation_i)], rect = goomba_i)
+        else:
+            draw_on_bg(goomba_death_ani, (goomba_i.x, (goomba_i.y + int(goomba_i.height / 2))))
+            # add a delay to dissapear the dead goomba 
+        # check collsion
+        if (colliderect_on_bg(mario_rect, goomba_i) and (on_ground == False)) == True:
+            enemy_list_alive[i] = False
+        elif (colliderect_on_bg(mario_rect, goomba_i) and enemy_list_alive[i]) == True:
+            if mario_state != 1:
+                mario_dead = True
+                # sys.exit()
 
     #### #### #### #### #### BEN's end #### #### #### #### #### ####
 
