@@ -188,7 +188,6 @@ def draw_brick_rect(brick_rect):
     if bumping_brick:
         # fix double bugs
         bumping_brick.y += bumping_brick_velo_y 
-        print(bumping_brick.y)
         if bumping_brick.y <= bumping_brick_ori_y - 20:
             bumping_brick_velo_y = 1
         elif bumping_brick.y > bumping_brick_ori_y + 1:
@@ -615,7 +614,7 @@ while True:
                 enemy_list_alive[i] = False
         elif (colliderect_on_bg(mario_rect, goomba_i) and enemy_list_alive[i]) == True:
             if enemy_list_alive[i] == True:
-                if mario_size == 1:
+                if mario_size == 1 and mario_state != 1:
                     mario_shrink()
                     mario_state = -1 # temp invincible
                     temp_invincible = pygame.time.get_ticks()
@@ -630,8 +629,6 @@ while True:
         # ~ Temporary invincible after big mario shrinked
         if temp_invincible: 
             mario_temp_inv_effect += 1 
-            print(mario_state)
-            print(mario_size)
             if mario_temp_inv_effect == 50:
                 mario_size = 99999 # doesn't exist, so the game won't blit
                                    # thus creating the invincible effect
@@ -639,10 +636,11 @@ while True:
             elif mario_temp_inv_effect == 25: 
                 mario_size = 0
             if mario_after_invincible_time - temp_invincible >= 2000:
-                temp_invincible = 0
-                mario_state = 0
-                mario_size = 0
-                mario_temp_inv_effect = 0
+                if mario_state != 1: # ate a star while in this interval
+                    temp_invincible = 0
+                    mario_state = 0
+                    mario_size = 0
+                    mario_temp_inv_effect = 0
 
         # goomba render
         if enemy_list_alive[i] == True:
