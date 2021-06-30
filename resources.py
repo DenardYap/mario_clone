@@ -11,13 +11,38 @@ floor4 = pygame.Rect(4960, 400, 2140, 50)
 floor_list = [floor1, floor2, floor3, floor4]
 bg = pygame.image.load("static_images/background.png")
 mario = pygame.image.load("static_images/mario.png")
-mario_rect = mario.get_rect(topleft = (40, 368))
+mario_rect = mario.get_rect(bottomleft = (40, 400))
 
 #pole
+### NAZ'S ###
 pole = pygame.image.load("static_images/pole.png")
+pole_rect = pole.get_rect(bottomleft = (6347, 368))
+
 pole_ball = pygame.image.load("static_images/pole_ball.png")
 pole_ball_co = (6341, 77)
-pole_rect = pole.get_rect(bottomleft = (6347, 368))
+
+flag_animation_list = []
+flag_animation_list.append(pygame.image.load("./animate_images/flag0.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag1.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag2.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag3.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag4.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag5.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag6.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag7.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag8.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag9.png"))
+flag_animation_list.append(pygame.image.load("./animate_images/flag10.png"))
+
+
+flag_song = pygame.mixer.Sound("music/stage_clear.wav")
+
+# debris
+brick_debris_bottom_left = pygame.image.load("static_images/brick_debris_bottom_left.png")
+brick_debris_bottom_right = pygame.image.load("static_images/brick_debris_bottom_right.png")
+brick_debris_top_left = pygame.image.load("static_images/brick_debris_top_left.png")
+brick_debris_top_right = pygame.image.load("static_images/brick_debris_top_right.png")
+
 #fonts
 SCORE = "SCORE"
 COINS = "COINS"
@@ -65,7 +90,24 @@ goomba_animation_list.append(pygame.image.load("./animate_images/goomba1.png"))
 goomba_hitbox = goomba_animation_list[0].get_rect(topleft = (700, 448-48-32))
 goomba_death_ani = pygame.image.load("./static_images/goomba_died.png")
 
-enemy_list = [goomba_hitbox]
+goomba1 = goomba_animation_list[0].get_rect(topleft = (680, 368))
+goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
+goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
+goomba4 = goomba_animation_list[0].get_rect(topleft = (1680, 368))
+goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 368))
+goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 368))
+goomba7 = goomba_animation_list[0].get_rect(topleft = (3110, 368))
+# turtle = (1705, 368)
+goomba8 = goomba_animation_list[0].get_rect(topleft = (3170, 368))
+goomba9 = goomba_animation_list[0].get_rect(topleft = (3650, 368))
+goomba10 = goomba_animation_list[0].get_rect(topleft = (3710, 368))
+goomba11 = goomba_animation_list[0].get_rect(topleft = (3960, 368))
+goomba12 = goomba_animation_list[0].get_rect(topleft = (4020, 368))
+goomba13 = goomba_animation_list[0].get_rect(topleft = (4100, 368))
+goomba14 = goomba_animation_list[0].get_rect(topleft = (4160, 368))
+goomba15 = goomba_animation_list[0].get_rect(topleft = (5570, 368))
+goomba16 = goomba_animation_list[0].get_rect(topleft = (5630, 368))
+enemy_list = [goomba1, goomba2, goomba3, goomba4, goomba5, goomba6, goomba7, goomba8, goomba9, goomba10, goomba11, goomba12, goomba13, goomba14, goomba15, goomba16]
 #############
 
 ### EEJOY's ### 
@@ -103,13 +145,9 @@ brick_rect28 = brick.get_rect(topleft = (5406, 272))
 brick_rect29 = brick.get_rect(topleft = (5470, 272))
 coin_brick_rect = brick.get_rect(topleft = (3007, 272))
 star_brick_rect = brick.get_rect(topleft = (3231, 272))
-remove_coin_list = []
-remove_mushroom_list = []
-# maybe can come out with a better name as this list
-# does both Draw and Remove
-remove_flower_list = []
-# maybe can come out with a better name as this list
-# does both Draw and Remove
+coin_list  = []
+mushroom_list = []
+flower_list = []
 remove_brick_list = []
 drawn_mushroom_list = []
 drawn_flower_list = []
@@ -240,29 +278,85 @@ flower_rect2 = flower[0].get_rect(topleft = (2494, 270))
 flower_rect3 = flower[0].get_rect(topleft = (3486, 142))
 
 # Import small invincible
-a = [pygame.image.load("animate_images/small_invincible1_0.png"), pygame.image.load("animate_images/small_invincible2_0.png"), 
+small_a = [pygame.image.load("animate_images/small_invincible1_0.png"), pygame.image.load("animate_images/small_invincible2_0.png"), 
     pygame.image.load("animate_images/small_invincible3_0.png"), pygame.image.load("animate_images/small_invincible2_0.png"),
     pygame.image.load("animate_images/small_invincible0_0.png"), pygame.image.load("animate_images/small_invincible_jump0_0.png")]
-b = [pygame.image.load("animate_images/small_invincible1_1.png"), pygame.image.load("animate_images/small_invincible2_1.png"), 
+small_b = [pygame.image.load("animate_images/small_invincible1_1.png"), pygame.image.load("animate_images/small_invincible2_1.png"), 
     pygame.image.load("animate_images/small_invincible3_1.png"), pygame.image.load("animate_images/small_invincible2_1.png"),
     pygame.image.load("animate_images/small_invincible0_1.png"), pygame.image.load("animate_images/small_invincible_jump0_1.png")]
-c = [pygame.image.load("animate_images/small_invincible1_2.png"), pygame.image.load("animate_images/small_invincible2_2.png"), 
+small_c = [pygame.image.load("animate_images/small_invincible1_2.png"), pygame.image.load("animate_images/small_invincible2_2.png"), 
     pygame.image.load("animate_images/small_invincible3_2.png"), pygame.image.load("animate_images/small_invincible2_2.png"),
     pygame.image.load("animate_images/small_invincible0_2.png"), pygame.image.load("animate_images/small_invincible_jump0_2.png")]
 
-small_invincible_list = [a, b, c]
+small_invincible_list = [small_a, small_b, small_c]
 
-a_flip = []
-for i,small_invincible in enumerate(a):
-    a_flip.append(pygame.transform.flip((a[i]), True, False))
-b_flip = []
-for i,small_invincible in enumerate(b):
-    b_flip.append(pygame.transform.flip((b[i]), True, False))
-c_flip = []
-for i,small_invincible in enumerate(c):
-    c_flip.append(pygame.transform.flip((c[i]), True, False))
+small_a_flip = []
+for i,small_invincible in enumerate(small_a):
+    small_a_flip.append(pygame.transform.flip((small_a[i]), True, False))
+small_b_flip = []
+for i,small_invincible in enumerate(small_b):
+    small_b_flip.append(pygame.transform.flip((small_b[i]), True, False))
+small_c_flip = []
+for i,small_invincible in enumerate(small_c):
+    small_c_flip.append(pygame.transform.flip((small_c[i]), True, False))
 
-small_invincible_flip = [a_flip, b_flip, c_flip]
+small_invincible_flip = [small_a_flip, small_b_flip, small_c_flip]
+
+# Import big invincible
+big_a = [pygame.image.load("animate_images/invincible1_0.png"), pygame.image.load("animate_images/invincible2_0.png"), 
+    pygame.image.load("animate_images/invincible3_0.png"), pygame.image.load("animate_images/invincible2_0.png"),
+    pygame.image.load("animate_images/invincible0_0.png"), pygame.image.load("animate_images/invincible_jump0_0.png")]
+big_b = [pygame.image.load("animate_images/invincible1_1.png"), pygame.image.load("animate_images/invincible2_1.png"), 
+    pygame.image.load("animate_images/invincible3_1.png"), pygame.image.load("animate_images/invincible2_1.png"),
+    pygame.image.load("animate_images/invincible0_1.png"), pygame.image.load("animate_images/invincible_jump0_1.png")]
+big_c = [pygame.image.load("animate_images/invincible1_2.png"), pygame.image.load("animate_images/invincible2_2.png"), 
+    pygame.image.load("animate_images/invincible3_2.png"), pygame.image.load("animate_images/invincible2_2.png"),
+    pygame.image.load("animate_images/invincible0_2.png"), pygame.image.load("animate_images/invincible_jump0_2.png")]
+
+big_invincible_list = [big_a, big_b, big_c]
+
+big_a_flip = []
+for i,big_invincible in enumerate(big_a):
+    big_a_flip.append(pygame.transform.flip((big_a[i]), True, False))
+big_b_flip = []
+for i,big_invincible in enumerate(big_b):
+    big_b_flip.append(pygame.transform.flip((big_b[i]), True, False))
+big_c_flip = []
+for i,big_invincible in enumerate(big_c):
+    big_c_flip.append(pygame.transform.flip((big_c[i]), True, False))
+
+big_invincible_flip = [big_a_flip, big_b_flip, big_c_flip]
+
+# Import bigmario
+bigmario_list = []
+bigmario_list.append(pygame.image.load("animate_images/bigmario0.png"))
+bigmario_list.append(pygame.image.load("animate_images/bigmario1.png"))
+bigmario_list.append(pygame.image.load("animate_images/bigmario2.png"))
+bigmario_list.append(pygame.image.load("animate_images/bigmario1.png"))
+bigmario_list.append(pygame.image.load("static_images/bigmario.png"))
+bigmario_list.append(pygame.image.load("static_images/bigmario_jump.png"))
+
+bigmario_flip = []
+for i,animation in enumerate(bigmario_list):
+    bigmario_flip.append(pygame.transform.flip((bigmario_list[i]), True, False))
+
+bigmario_rect = bigmario_list[4].get_rect(bottomleft = (mario_rect.left, mario_rect.bottom))
+
+add_h = bigmario_list[4].get_height() - mario_rect.h
+add_w = bigmario_list[4].get_width() - mario_rect.w
+
+# Import firemario
+firemario_list = []
+firemario_list.append(pygame.image.load("animate_images/firemario0.png"))
+firemario_list.append(pygame.image.load("animate_images/firemario1.png"))
+firemario_list.append(pygame.image.load("animate_images/firemario2.png"))
+firemario_list.append(pygame.image.load("animate_images/firemario1.png"))
+firemario_list.append(pygame.image.load("static_images/firemario.png"))
+firemario_list.append(pygame.image.load("static_images/firemario_jump.png"))
+
+firemario_flip = []
+for i,animation in enumerate(firemario_list):
+    firemario_flip.append(pygame.transform.flip((firemario_list[i]), True, False))
 
 ###############
 #Mario animation
@@ -286,8 +380,13 @@ small_jump_sound.set_volume(0.5)
 main_theme_speedup = pygame.mixer.Sound('music/main_theme_speed_up.ogg')
 brick_smash_sound = pygame.mixer.Sound('sounds/brick_smash.ogg')
 bump_sound = pygame.mixer.Sound('sounds/bump.ogg')
+stomp_sound = pygame.mixer.Sound('sounds/stomp.ogg')
 coin_sound = pygame.mixer.Sound('sounds/coin.ogg')
 powerup_pop_sound = pygame.mixer.Sound('sounds/powerup_pop.ogg')
 powerup_eat_sound = pygame.mixer.Sound('sounds/powerup_eat.ogg')
 mario_kick_sound = pygame.mixer.Sound('sounds/kick.ogg')
 invincible_music = pygame.mixer.Sound('music/invincible.ogg')
+pipe_sound = pygame.mixer.Sound('sounds/pipe_sound.ogg') 
+
+powerup_eat_length = powerup_eat_sound.get_length()
+transform_interval = 5
