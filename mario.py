@@ -178,6 +178,7 @@ def draw_brick_rect(brick_rect):
     if mario_size != 0 and colliderect_on_bg_bottom(mario_rect, brick_rect):
         if brick_rect not in remove_brick_list:
             brick_smash_sound.play()
+            update_score(50)
         remove_brick_list.append(brick_rect) #Reverse, works
         remove_brick_rect(brick_rect) #remove the rect 
     elif mario_size == 0 and colliderect_on_bg_bottom(mario_rect, brick_rect):
@@ -260,6 +261,8 @@ def coin_jump(coin_rect, question_rect):
 
     if coin_rect.y == question_rect.y:
         coin_sound.play()
+        update_coins()
+        update_score(200)
     if not coin_rect.y > question_rect.y:
         F = (1/2) * m * (v ** 2)
         coin_rect.y -= F
@@ -314,6 +317,7 @@ def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
     if colliderect_on_bg(mario_rect, red_mushroom_rect):
         for mushroom in mushroom_list:
             if mushroom == red_mushroom_rect:
+                update_score(1000)
                 mushroom_list.remove(red_mushroom_rect)
                 powerup_eat_sound.play()
                 start_time_grow = pygame.time.get_ticks()
@@ -321,6 +325,7 @@ def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
     if colliderect_on_bg(mario_rect, flower_rect):
         for flower in flower_list:
             if flower == flower_rect:
+                update_score(1000)
                 flower_list.remove(flower_rect)
                 powerup_eat_sound.play()
 
@@ -610,6 +615,7 @@ while True:
             if enemy_list_alive[i] == True:
                 jump = True
                 stomp_sound.play()
+                update_score(100)
                 max_height = goomba_i.bottom - 50
                 enemy_list_alive[i] = False
         elif (colliderect_on_bg(mario_rect, goomba_i) and enemy_list_alive[i]) == True:
@@ -622,6 +628,7 @@ while True:
                 elif mario_state == 0:
                     mario_dead = True
                 elif mario_state == 1:
+                    update_score(100)
                     enemy_list_alive[i] = False 
 
         mario_after_invincible_time = pygame.time.get_ticks()
@@ -719,6 +726,8 @@ while True:
         # Only draw coin for the first time of collision
         if count_coin == 1:            
             coin_sound.play()
+            update_coins()
+            update_score(200)
             draw_coin = True
             m = 1
             v = 5
