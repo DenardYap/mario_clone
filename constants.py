@@ -18,6 +18,7 @@ flag_mario_drop = False
 jump_logic = True
 bonus_score = 0
 play_flag_song = False 
+TARGET_FPS = 60
 # marioSpeed = 10
 
 
@@ -46,7 +47,7 @@ vy = 5
 m = 1
 v = 5
 
-# If small = 0, big = 1
+# If small = 0, big = 1, fire = 2
 mario_size = 0
 # If normal = 0, invincible = 1, temp_invincible = -1
 mario_state = 0
@@ -58,7 +59,6 @@ start_time_invincible = 0
 start_time_grow = 0
 ### BEN's ###
 
-goomba_alive = True
 goomba_animation_i = 0
 
 goomba1_alive = True
@@ -103,7 +103,7 @@ facing_left = -1
 #sounds
 main_theme_play = False
 main_theme_fastvers = False
-invincible__music = False
+invincible_music_played = False
 ###################################
 
 # Bernard
@@ -132,7 +132,21 @@ coins_value = 0
 world_value = "1-1"
 time_value = 400
 lives_value = 3
+seconds = 0
 
 # ~ temporary invincible 
 temp_invincible = 0
 mario_temp_inv_effect = 0
+
+# ~ afterlife
+after_life_time = 0
+BLACK = (0, 0, 0)
+game_over_song_played = False
+game_over_song_timer = 0
+
+# Fireball 
+fireBallCount = 0 # max = 3
+fireHitCount = 0 # max = 2
+fireBall_vel_x = 8
+fireBall_vel_y = 4
+temp_counter = 0
