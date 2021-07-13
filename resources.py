@@ -49,6 +49,7 @@ COINS = "COINS"
 WORLD = "WORLD"
 TIME = "TIME"
 LIVES = "LIVES"
+GAME_OVER = "GAME OVER"
 WHITE = (255,255,255)
 mario_font = pygame.font.Font("fonts/mario_font.ttf", 36)
 score_font = mario_font.render(SCORE, False, WHITE)
@@ -56,6 +57,7 @@ coins_font = mario_font.render(COINS, False, WHITE)
 world_font = mario_font.render(WORLD, False, WHITE)
 time_font = mario_font.render(TIME, False, WHITE)
 lives_font = mario_font.render(LIVES, False, WHITE)
+game_over_font = mario_font.render(GAME_OVER, False, WHITE)
 
 #pipe
 small_pipe = pygame.image.load("static_images/pipe_small.png")
@@ -72,7 +74,6 @@ pipe6_rect = small_pipe.get_rect(bottomleft = (5728,400))
 
 titleBanner = pygame.image.load('static_images/title.png')
 main_theme_song = pygame.mixer.Sound('music/main_theme.ogg')
-game_over_song = pygame.mixer.Sound('music/game_over.ogg')
 font = pygame.font.Font('fonts/mario_font.ttf', 24) 
 gameoverFont = pygame.font.Font('fonts/mario_font.ttf', 72) 
 copywrite = font.render("©1985 Nintendo", False ,(255,255,0))
@@ -378,6 +379,7 @@ small_jump_sound = pygame.mixer.Sound('sounds/small_jump.ogg')
 small_jump_sound.set_volume(0.5)
 # mario_dead = pygame.mixer.Sound('music/dead.wav')
 main_theme_speedup = pygame.mixer.Sound('music/main_theme_speed_up.ogg')
+game_over_song = pygame.mixer.Sound('music/game_over.ogg')
 brick_smash_sound = pygame.mixer.Sound('sounds/brick_smash.ogg')
 bump_sound = pygame.mixer.Sound('sounds/bump.ogg')
 stomp_sound = pygame.mixer.Sound('sounds/stomp.ogg')
@@ -385,8 +387,26 @@ coin_sound = pygame.mixer.Sound('sounds/coin.ogg')
 powerup_pop_sound = pygame.mixer.Sound('sounds/powerup_pop.ogg')
 powerup_eat_sound = pygame.mixer.Sound('sounds/powerup_eat.ogg')
 mario_kick_sound = pygame.mixer.Sound('sounds/kick.ogg')
+fireball_sound = pygame.mixer.Sound('sounds/fireball.ogg')
 invincible_music = pygame.mixer.Sound('music/invincible.ogg')
 pipe_sound = pygame.mixer.Sound('sounds/pipe_sound.ogg') 
 
 powerup_eat_length = powerup_eat_sound.get_length()
+game_over_song_length = game_over_song.get_length() * 1000
 transform_interval = 5
+
+# Tarun's fireball
+
+fireBall_list = []
+fireBall_list.append(pygame.image.load("animate_images/fire0.png"))
+fireBall_list.append(pygame.image.load("animate_images/fire1.png"))
+fireBall_list.append(pygame.image.load("animate_images/fire2.png"))
+fireBall_list.append(pygame.image.load("animate_images/fire3.png"))
+fireBall_rect_list = [None, None]
+
+fireHit_animation = []
+fireHit_animation.append(pygame.image.load("animate_images/fire_exploded0.png"))
+fireHit_animation.append(pygame.image.load("animate_images/fire_exploded1.png"))
+fireHit_animation.append(pygame.image.load("animate_images/fire_exploded2.png"))
+
+fireExploded = [False, False]
