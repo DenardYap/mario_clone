@@ -25,11 +25,12 @@ clock = pygame.time.Clock()
 time_ticks = pygame.time.get_ticks() # Use to countdown timer on top
 TARGET_FPS = 60
 
-# function to draw the floors, total of 4 floors 
-def game_reset():
+####### GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET #####  
+def reset_game():
     # one of the reasons why you want to use class
     # too many global when it comes to things like this
     global bg_x_pos
+    global mario_rect
     global mario_size
     global mario_state
     global mario_dead
@@ -37,17 +38,82 @@ def game_reset():
     global draw_coin
     global draw_star
     global start_time_invincible
-    global goomba_alive
+    global goomba1_alive
+    global goomba2_alive
+    global goomba3_alive
+    global goomba4_alive
+    global goomba5_alive
+    global goomba6_alive
+    global goomba7_alive
+    global goomba8_alive
+    global goomba9_alive
+    global goomba10_alive
+    global goomba11_alive
+    global goomba12_alive
+    global goomba13_alive
+    global goomba14_alive
+    global goomba15_alive
+    global goomba16_alive
+    global goomba1
+    global goomba2
+    global goomba3
+    global goomba4
+    global goomba5
+    global goomba6
+    global goomba7
+    global goomba8
+    global goomba9
+    global goomba10
+    global goomba11
+    global goomba12
+    global goomba13
+    global goomba14
+    global goomba15
+    global goomba16
+    global coin_rect0
+    global coin_rect1
+    global coin_rect2
+    global coin_rect3
+    global coin_rect4
+    global coin_rect5
+    global coin_rect6
+    global coin_rect7
+    global coin_rect8
+    global coin_rect9
+    global enemy_list
+    global enemy_list_alive
+    global goomba_ticks
     global on_ground
     global score_value
     global coins_value
-    global time_value
-    global lives_value
+    global time_ticks
     global main_theme_play
     global main_theme_fastvers
-    global invincible__music
-    
+    global invincible_music_played
+    global after_life_time
+    global after_dead_time
+    global coin_list
+    global mushroom_list
+    global flower_list
+    global remove_brick_list
+    global drawn_mushroom_list
+    global drawn_flower_list
+    global empty_brick_list
+    global seconds
+    global mario_dead_velo
+    global debris_list
+    global hit_box_list
+    global red_mushroom_rect1
+    global red_mushroom_rect2
+    global red_mushroom_rect3
+    global star_rect
+    global flower_rect1
+    global flower_rect2
+    global flower_rect3
+    global count_star
+
     bg_x_pos = 0
+    mario_rect = mario.get_rect(bottomleft = (40, 400))
     mario_size = 0
     mario_state = 0
     start_time_invincible = 0
@@ -55,16 +121,158 @@ def game_reset():
     mario_died_one_time = False
     draw_coin = False
     draw_star = False
-    goomba_alive = True
+    goomba1 = goomba_animation_list[0].get_rect(topleft = (680, 368))
+    goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
+    goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
+    goomba4 = goomba_animation_list[0].get_rect(topleft = (1680, 368))
+    goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 368))
+    goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 368))
+    goomba7 = goomba_animation_list[0].get_rect(topleft = (3110, 368))
+    # turtle = (1705, 368)
+    goomba8 = goomba_animation_list[0].get_rect(topleft = (3170, 368))
+    goomba9 = goomba_animation_list[0].get_rect(topleft = (3650, 368))
+    goomba10 = goomba_animation_list[0].get_rect(topleft = (3710, 368))
+    goomba11 = goomba_animation_list[0].get_rect(topleft = (3960, 368))
+    goomba12 = goomba_animation_list[0].get_rect(topleft = (4020, 368))
+    goomba13 = goomba_animation_list[0].get_rect(topleft = (4100, 368))
+    goomba14 = goomba_animation_list[0].get_rect(topleft = (4160, 368))
+    goomba15 = goomba_animation_list[0].get_rect(topleft = (5570, 368))
+    goomba16 = goomba_animation_list[0].get_rect(topleft = (5630, 368))
+    enemy_list = [goomba1, goomba2, goomba3, goomba4, goomba5, goomba6, goomba7, goomba8, goomba9, goomba10, goomba11, goomba12, goomba13, goomba14, goomba15, goomba16]
+    coin_rect0 = coin.get_rect(midtop = (3023, 272))
+    coin_rect1 = coin.get_rect(midtop = (527, 272))
+    coin_rect2 = coin.get_rect(midtop = (752, 272))
+    coin_rect3 = coin.get_rect(midtop = (719, 144))
+    coin_rect4 = coin.get_rect(midtop = (3023, 144))
+    coin_rect5 = coin.get_rect(midtop = (3407, 272))
+    coin_rect6 = coin.get_rect(midtop = (3502, 272))
+    coin_rect7 = coin.get_rect(midtop = (3598, 272))
+    coin_rect8 = coin.get_rect(midtop = (4143, 144))
+    coin_rect9 = coin.get_rect(midtop = (5455, 272))
+    goomba1_alive = True
+    goomba2_alive = True
+    goomba3_alive = True
+    goomba4_alive = True
+    goomba5_alive = True
+    goomba6_alive = True
+    goomba7_alive = True
+    goomba8_alive = True
+    goomba9_alive = True
+    goomba10_alive = True
+    goomba11_alive = True
+    goomba12_alive = True
+    goomba13_alive = True
+    goomba14_alive = True
+    goomba15_alive = True
+    goomba16_alive = True
+    enemy_list_alive = [goomba1_alive, goomba2_alive, goomba3_alive, goomba4_alive, goomba5_alive, goomba6_alive, goomba7_alive, goomba8_alive, goomba9_alive, goomba10_alive, goomba11_alive, goomba12_alive, goomba13_alive, goomba14_alive, goomba15_alive, goomba16_alive]
+    goomba_ticks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     on_ground = True
     score_value = 0
     coins_value = 0
-    time_value = 400
-    lives_value = 3
+    time_ticks = pygame.time.get_ticks() 
+    seconds = 0
     main_theme_play = False
     main_theme_fastvers = False
-    invincible__music = False
+    invincible_music_played = False
+    after_life_time = 0
+    coin_list  = []
+    mushroom_list = []
+    flower_list = []
+    remove_brick_list = []
+    drawn_mushroom_list = []
+    drawn_flower_list = []
+    empty_brick_list = []
+    mario_dead_velo = -3
+    debris_list = {"DEBRIS": [], "Y": [],
+                "BL": [], "BR": [], 
+                "TL": [], "TR": []}
+    hit_box_list = [question_rect1,question_rect2,question_rect3,question_rect4,question_rect5,question_rect6,
+                question_rect7,question_rect8,question_rect9,question_rect10,question_rect11,question_rect12,
+                pipe1_rect, pipe2_rect, pipe3_rect, pipe4_rect, pipe5_rect, pipe6_rect, floor1, floor2, floor3, floor4,
+                brick_rect1, brick_rect2, brick_rect3, brick_rect4, brick_rect5, brick_rect6, brick_rect7,
+                brick_rect8, brick_rect9, brick_rect10, brick_rect11, brick_rect12, brick_rect13, brick_rect14,
+                brick_rect15, brick_rect16, brick_rect17, brick_rect18, brick_rect19, brick_rect20, brick_rect21,
+                brick_rect22, brick_rect23, brick_rect24, brick_rect25, brick_rect26, brick_rect27, brick_rect28,
+                brick_rect29, coin_brick_rect, star_brick_rect, rock_rect1, rock_rect2, rock_rect3, rock_rect4,
+                rock_rect5, rock_rect6, rock_rect7, rock_rect8, rock_rect9, rock_rect10, rock_rect11, rock_rect12,
+                rock_rect13, rock_rect14, rock_rect15, rock_rect16, rock_rect17, rock_rect18, rock_rect19, rock_rect20,
+                rock_rect21, rock_rect22, rock_rect23, rock_rect24, rock_rect25, rock_rect26, rock_rect27, rock_rect4_1,
+                rock_rect4_2, rock_rect4_3, rock_rect5_1, rock_rect5_2, rock_rect5_3, rock_rect13_1, rock_rect13_2, rock_rect13_3,
+                rock_rect14_1, rock_rect14_2, rock_rect14_3, rock_rect26_1, rock_rect26_2, rock_rect26_3, rock_rect26_4,
+                rock_rect26_5, rock_rect26_6, rock_rect26_7]
+    red_mushroom_rect1 = red_mushroom.get_rect(topleft = (672, 270))
+    red_mushroom_rect2 = red_mushroom.get_rect(topleft = (2494, 270))
+    red_mushroom_rect3 = red_mushroom.get_rect(topleft = (3486, 142))
+    star_rect = star[0].get_rect(topleft = (3231, 270))
+    flower_rect1 = flower[0].get_rect(topleft = (672, 270))
+    flower_rect2 = flower[0].get_rect(topleft = (2494, 270))
+    flower_rect3 = flower[0].get_rect(topleft = (3486, 142))
+    count_star = 0
+
+####### GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET #####   
+def restart_game(time_interval = 5000):
+    """
+    float: time_interval, milliseconds
+    """
+    global lives_value 
+    after_dead_time = pygame.time.get_ticks()
+    if after_life_time:
+        if after_dead_time - after_life_time > time_interval:
+            lives_value -= 1
+            if lives_value > -1:
+                reset_game()
+
+def game_over_screen():
+    global after_life_time
+    global game_over_song_played
+    global game_over_song_timer
+    after_life_time = 0
+    screen.fill(BLACK)
+    screen.blit(game_over_font, (500 - game_over_font.get_width()/2, 224 - game_over_font.get_height()/2))
+    if game_over_song_played == False:
+        game_over_song_timer = pygame.time.get_ticks()
+        game_over_song.play()
+        game_over_song_played = True
+    game_over_song_time = pygame.time.get_ticks()
+    if game_over_song_time - game_over_song_timer > game_over_song_length:
+        sys.exit()
+    # play gameover music
+    # display gameover text
+
+def display_top_texts():
     
+    # ~ Render Top texts 
+    screen.blit(score_font, (50,0))
+    score_value_font = mario_font.render(str(score_value), False, WHITE)
+    # need to place it in the middle of the above font 
+    # logics below 
+    # get the half width of the above font, then plus its original X location, then minus 
+    # value's font width divide by 2, you can get the exact center.. 
+    exact_center = score_font.get_width()/2 + 50 - score_value_font.get_width()/2
+    screen.blit(score_value_font, (exact_center, 30))
+
+    screen.blit(coins_font, (250,0))
+    coins_value_font = mario_font.render(str(coins_value), False, WHITE)
+    exact_center = coins_font.get_width()/2 + 250 - coins_value_font.get_width()/2
+    screen.blit(coins_value_font, (exact_center, 30))
+
+    screen.blit(world_font, (450,0))
+    world_value_font = mario_font.render(world_value, False, WHITE)
+    exact_center = world_font.get_width()/2 + 450 - world_value_font.get_width()/2
+    screen.blit(world_value_font, (exact_center, 30))
+
+    screen.blit(time_font, (650,0))
+    time_value_font = mario_font.render(str(time_value-int(seconds)), False, WHITE)
+    exact_center = time_font.get_width()/2 + 650 - time_value_font.get_width()/2
+    screen.blit(time_value_font, (exact_center, 30))
+
+    screen.blit(lives_font, (850,0))
+    lives_value_font = mario_font.render(str(lives_value), False, WHITE)
+    exact_center = lives_font.get_width()/2 + 850 - lives_value_font.get_width()/2
+    screen.blit(lives_value_font, (exact_center, 30))
+
+    #### #### #### #### #### BEN's #### #### #### #### #### ####
 def draw_floor():
     for floor in floor_list:
         temp_rect = copy(floor)
@@ -111,7 +319,7 @@ def colliderect_on_bg_bottom(bully, victim):
     # return bully.collidepoint((bg_x_pos + victim[0], victim[1]))
 
 # check mario's horizontal collision, if detected, stop mario from maaaaaoving
-def check_collisonsx():
+def check_collisonsx(temp_fireball_rect = None):
     global mario_rect
     global hit_box_list
     global mario_count
@@ -119,6 +327,7 @@ def check_collisonsx():
     global velocity_x
     global skied_left
     global skied_right
+    global fireBall_rect_list
     """
     enemy: False is victim is not enemy, True if victim is enemy
     - Therefore we can let mario dies if he hits an enemy instead of wall
@@ -129,17 +338,21 @@ def check_collisonsx():
 
         temp_hit_box = copy(hit_box)
         temp_hit_box.x += bg_x_pos
-        if mario_rect.colliderect(temp_hit_box):
-            if abs(mario_rect.top - temp_hit_box.bottom) > 5:
-                if moving_left == True or skied_left == False:
-                    if skied_right == True:
-                        mario_rect.x = temp_hit_box.right
-                        mario_count = 4
-                if moving_right == True or skied_right == False:
-                    if skied_left == True:
-                        mario_rect.x = temp_hit_box.left - mario_rect.w
-                        mario_count = 4     
-
+        if temp_fireball_rect == None:
+            if mario_rect.colliderect(temp_hit_box):
+                if abs(mario_rect.top - temp_hit_box.bottom) > 5:
+                    if moving_left == True or skied_left == False:
+                        if skied_right == True:
+                            mario_rect.x = temp_hit_box.right
+                            mario_count = 4
+                    if moving_right == True or skied_right == False:
+                        if skied_left == True:
+                            mario_rect.x = temp_hit_box.left - mario_rect.w
+                            mario_count = 4    
+        elif temp_fireball_rect:
+            if temp_fireball_rect.colliderect(temp_hit_box):
+                return temp_hit_box
+        
 # check mario's vertical collision, if detected, stop mario from going up or down
 def check_collisonsy():
     global mario_rect
@@ -178,12 +391,14 @@ def draw_brick_rect(brick_rect):
     if mario_size != 0 and colliderect_on_bg_bottom(mario_rect, brick_rect):
         if brick_rect not in remove_brick_list:
             brick_smash_sound.play()
+            update_score(50)
         remove_brick_list.append(brick_rect) #Reverse, works
         remove_brick_rect(brick_rect) #remove the rect 
     elif mario_size == 0 and colliderect_on_bg_bottom(mario_rect, brick_rect):
-        bump_sound.play()
-        bumping_brick = brick_rect
-        bumping_brick_ori_y = brick_rect.y
+        if brick_rect not in remove_brick_list: #don't draw if it's collided
+            bump_sound.play()
+            bumping_brick = brick_rect
+            bumping_brick_ori_y = brick_rect.y
         #move the brick up a bit
     if bumping_brick:
         # fix double bugs
@@ -260,6 +475,8 @@ def coin_jump(coin_rect, question_rect):
 
     if coin_rect.y == question_rect.y:
         coin_sound.play()
+        update_coins()
+        update_score(200)
     if not coin_rect.y > question_rect.y:
         F = (1/2) * m * (v ** 2)
         coin_rect.y -= F
@@ -279,10 +496,10 @@ def remove_coin_rect(coin_rect):
 def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
     if colliderect_on_bg_bottom(mario_rect, question_rect):
         empty_brick_list.append(question_rect)
-        if mario_size == 0:
+        if mario_size == 0 or mario_size == 99999:
             mushroom_list.append(red_mushroom_rect)
             drawn_mushroom_list.append(red_mushroom_rect) #make sure only either mushroom or flower pop up once
-        elif mario_size == 1 and red_mushroom_rect not in drawn_mushroom_list and flower_rect not in drawn_flower_list:
+        elif (mario_size == 1 or mario_size == 2) and red_mushroom_rect not in drawn_mushroom_list and flower_rect not in drawn_flower_list:
             flower_list.append(flower_rect)
             drawn_flower_list.append(flower_rect) #make sure only either mushroom or flower pop up once
 
@@ -309,20 +526,22 @@ def mushroom_flower_rise(mushroom_flower_rect, question_rect):
         mushroom_flower_rect.y -= 1
 
 def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
-    global mario_size
     global start_time_grow
     if colliderect_on_bg(mario_rect, red_mushroom_rect):
         for mushroom in mushroom_list:
             if mushroom == red_mushroom_rect:
                 mushroom_list.remove(red_mushroom_rect)
                 powerup_eat_sound.play()
+                update_score(1000)
                 start_time_grow = pygame.time.get_ticks()
-                mario_size = 1
+
     if colliderect_on_bg(mario_rect, flower_rect):
         for flower in flower_list:
             if flower == flower_rect:
                 flower_list.remove(flower_rect)
                 powerup_eat_sound.play()
+                update_score(1000)
+                mario_grow_fire()
 
 def mario_grow():
     global mario_size
@@ -330,6 +549,21 @@ def mario_grow():
     mario_size = 1
     # Make the mario_rect fits the new bigmario
     mario_rect = bigmario_list[4].get_rect(bottomleft = (mario_rect.left, mario_rect.bottom))
+
+def mario_grow_fire():
+    global mario_size
+    global mario_rect
+    global temp_invincible
+    global mario_temp_inv_effect
+    global mario_state
+    mario_size = 2
+    # Make the mario_rect fits the new bigmario
+    mario_rect = bigmario_list[4].get_rect(bottomleft = (mario_rect.left, mario_rect.bottom))
+    # in case eaten fire when temporary invincible 
+    temp_invincible = 0
+    if mario_state != 1:
+        mario_state = 0
+    mario_temp_inv_effect = 0
 
 def mario_shrink():
     global mario_size
@@ -351,21 +585,6 @@ def update_coins():
     # everytime hit a coin call this function
     global coins_value
     coins_value += 1
-
-# update_time not needed
-
-def update_lives():
-    # call this funcion everytime mario dies 
-    # UNFINISHED
-    global lives_value
-    lives_value -= 1 
-    if lives_value == 0:
-        pass
-        # black screen it 
-
-# example code on adding score once
-# mario touches the pole, To be ameliorated
-
 
 def endgameSequence():
     global moving_right
@@ -391,7 +610,6 @@ def endgameSequence():
         if mario_rect.y <336:
             mario_rect.y += 4
 
-          
 def check_pole():
     global score_value
     global bonus_score
@@ -417,12 +635,13 @@ def check_pole():
                 score_value += 100 
         
 def check_music_playing():
+    # return the music it is now playing, return None if no
     if main_theme_song.get_num_channels() >= 1:
         return main_theme_song
     if main_theme_speedup.get_num_channels() >= 1:
         return main_theme_speedup
     return None 
-#bg_music_check
+    
 def mario_bg_music():
     global main_theme_play
     global main_theme_fastvers
@@ -444,6 +663,7 @@ def mario_bg_music():
             main_theme_fastvers = False
             main_theme_song.stop()
             main_theme_speedup.stop()
+            
     if mario_dead == True:
         if main_theme_play == True:
             main_theme_play = False
@@ -524,75 +744,113 @@ def skiing_effect_right():
         acceleration_x = 0
         velocity_x = 0
         skied_right = True
-        
-while True:
-    check_pole() # TBD
-    # The floors for mario to stand on
-    draw_floor() #draw the floor before the BG 
-    screen.blit(bg, (bg_x_pos,0)) #draw BG 
-    draw_on_bg(pole, rect = pole_rect)
-    draw_on_bg(pole_ball, pole_ball_co)
 
-    flag_animation_i += 0.1
-    if flag_animation_i >= 10:
-        flag_animation_i = 0
-    flag_co = (6283, (flag_y_pos))
-    draw_on_bg(flag_animation_list[int(flag_animation_i)], flag_co)
-    mario_bg_music()
-
-    # ~ Mario dead logic 
+def blit_mario():
+    global mario_dead
+    global on_ground
+    global direction
+    global mario_size
+    global mario_state
+    global mario_count
+    
     if mario_dead == False:
-        # timer to decrease the 400 times 
-        # in Mario, 1 sec is 0.6 sec in real life 
-        seconds=(pygame.time.get_ticks()-time_ticks)/600
-        if (time_value - int(seconds)) <= 0:
-            mario_dead = True
+        if on_ground == False:
+            mario_count = 5
+        if direction == -1:
+            if (mario_size == 0 and mario_state == 0) or (mario_size == 0 and mario_state == -1):
+                screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_size == 1 and mario_state == 0:
+                screen.blit(bigmario_flip[int(mario_count)], (mario_rect.x, mario_rect.y))
+            elif mario_size == 2 and mario_state == 0:
+                screen.blit(firemario_flip[int(mario_count)], (mario_rect.x, mario_rect.y))
+            elif mario_size == 0 and mario_state == 1:
+                screen.blit(small_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif (mario_size == 1 and mario_state == 1) or (mario_size == 2 and mario_state == 1):
+                screen.blit(big_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+        else:
+            if (mario_size == 0 and mario_state == 0) or (mario_size == 0 and mario_state == -1):
+                screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif mario_size == 1 and mario_state == 0:
+                screen.blit(bigmario_list[int(mario_count)], (mario_rect.x, mario_rect.y))
+            elif mario_size == 2 and mario_state == 0:
+                screen.blit(firemario_list[int(mario_count)], (mario_rect.x, mario_rect.y))
+            elif mario_size == 0 and mario_state == 1:
+                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
+            elif (mario_size == 1 and mario_state == 1) or (mario_size == 2 and mario_state == 1):
+                screen.blit(big_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
     else:
-        # these are the things that only have to 
-        # happen ONE TIME after mario died
-        if mario_died_one_time == False:
-            # pause all other musics
-            mario_died_x = mario_rect.x
-            mario_died_y = mario_rect.y
-            mario_died_one_time = True
-            mario_dead_sound.play()
-        # ~ Let Mario jumps when he dies 
-        if mario_died_y <= 272:
-            mario_dead_velo = 3
-        mario_died_y += mario_dead_velo
+        screen.blit(mario_died_pic,(mario_died_x, mario_died_y))
 
+def assign_fireball():
+    
+    # spawn fireball
+    global fireBall_rect_list
+    for i in range(len(fireBall_rect_list)): 
+        if fireBall_rect_list[i] == None:
+            fireBall_rect_list[i] = fireBall_list[i].get_rect(center = mario_rect.center)
+            fireball_sound.play()
+            break 
 
-    # ~ Render Top texts 
-    screen.blit(score_font, (50,0))
-    score_value_font = mario_font.render(str(score_value), False, WHITE)
-    # need to place it in the middle of the above font 
-    # logics below 
-    # get the half width of the above font, then plus its original X location, then minus 
-    # value's font width divide by 2, you can get the exact center.. 
-    exact_center = score_font.get_width()/2 + 50 - score_value_font.get_width()/2
-    screen.blit(score_value_font, (exact_center, 30))
+def do_fireball():
+    # fireball's logics
+    global fireBall_rect_list
+    global fireBall_vel_y
+    global fireBall_vel_x
+    global fireBallCount
+    global direction
+    # animation
+    fireBallCount += 0.1
+    if fireBallCount > 3: 
+        fireBallCount = 0
 
-    screen.blit(coins_font, (250,0))
-    coins_value_font = mario_font.render(str(coins_value), False, WHITE)
-    exact_center = coins_font.get_width()/2 + 250 - coins_value_font.get_width()/2
-    screen.blit(coins_value_font, (exact_center, 30))
+    for i in range(len(fireBall_rect_list)): 
+        if fireBall_rect_list[i]:
+            collided_goomba = collide_goomba(fireBall_rect_list[i]) # hit goomba or not 
+            collided_wall = check_collisonsx(temp_fireball_rect=fireBall_rect_list[i]) # hit wall or not
 
-    screen.blit(world_font, (450,0))
-    world_value_font = mario_font.render(world_value, False, WHITE)
-    exact_center = world_font.get_width()/2 + 450 - world_value_font.get_width()/2
-    screen.blit(world_value_font, (exact_center, 30))
+            if collided_goomba:
+                fireExploded[i] = (collided_goomba.left + bg_x_pos, fireBall_rect_list[i].y)
+                fireBall_rect_list[i] = None
+            elif collided_wall:
+                fireExploded[i] = (collided_wall.left, fireBall_rect_list[i].y)
+                fireBall_rect_list[i] = None
+            else:
+                # hit nothing
+                screen.blit(fireBall_list[int(fireBallCount)], fireBall_rect_list[i])
+                fireBall_rect_list[i].x += fireBall_vel_x 
+                if fireBall_rect_list[i].bottom >= 398: # touches the ground
+                    fireBall_vel_y = -4 
+                elif fireBall_rect_list[i].bottom <= 376: 
+                    fireBall_vel_y = 4
+                fireBall_rect_list[i].y += fireBall_vel_y
+                # ~ Out of screen
+                if fireBall_rect_list[i].x >= 1000 or fireBall_rect_list[i].x <= 0:
+                    fireBall_rect_list[i] = None
 
-    screen.blit(time_font, (650,0))
-    time_value_font = mario_font.render(str(time_value-int(seconds)), False, WHITE)
-    exact_center = time_font.get_width()/2 + 650 - time_value_font.get_width()/2
-    screen.blit(time_value_font, (exact_center, 30))
+def fireball_explode(i):
+    # Fireball exploding logics
+    global fireExploded
+    global fireHitCount
+    global temp_counter
 
-    screen.blit(lives_font, (850,0))
-    lives_value_font = mario_font.render(str(lives_value), False, WHITE)
-    exact_center = lives_font.get_width()/2 + 850 - lives_value_font.get_width()/2
-    screen.blit(lives_value_font, (exact_center, 30))
+    fireHitCount += 0.1
+    if fireHitCount > 2:
+        fireHitCount = 0
+    screen.blit(fireHit_animation[int(fireHitCount)], fireExploded[i])
+    temp_counter += 1 
+    if temp_counter == 25:
+        temp_counter = 0
+        fireExploded[i] = None
 
-    #### #### #### #### #### BEN's #### #### #### #### #### ####
+def do_goomba():
+    
+    # goomba's moving and blitting
+    global enemy_list
+    global enemy_list_alive
+    global goomba_animation_i
+    global bg_x_pos
+    global goomba_ticks
+
     # goomba move
     for i, goomba_i in enumerate(enemy_list):
         # need to change goomba_alive to goomba_i.alive
@@ -604,43 +862,11 @@ while True:
         if goomba_animation_i >= 2:
             goomba_animation_i = 0
 
-
-        # check collsion
-        if (colliderect_on_bg(mario_rect, goomba_i) and (on_ground == False)) == True:
-            if enemy_list_alive[i] == True:
-                jump = True
-                stomp_sound.play()
-                max_height = goomba_i.bottom - 50
-                enemy_list_alive[i] = False
-        elif (colliderect_on_bg(mario_rect, goomba_i) and enemy_list_alive[i]) == True:
-            if enemy_list_alive[i] == True:
-                if mario_size == 1 and mario_state != 1:
-                    mario_shrink()
-                    mario_state = -1 # temp invincible
-                    temp_invincible = pygame.time.get_ticks()
-                    pipe_sound.play() # somehow it's pipe sound lol
-                elif mario_state == 0:
-                    mario_dead = True
-                elif mario_state == 1:
-                    enemy_list_alive[i] = False 
-
-        mario_after_invincible_time = pygame.time.get_ticks()
-        
-        # ~ Temporary invincible after big mario shrinked
-        if temp_invincible: 
-            mario_temp_inv_effect += 1 
-            if mario_temp_inv_effect == 50:
-                mario_size = 99999 # doesn't exist, so the game won't blit
-                                   # thus creating the invincible effect
-                mario_temp_inv_effect = 0
-            elif mario_temp_inv_effect == 25: 
-                mario_size = 0
-            if mario_after_invincible_time - temp_invincible >= 2000:
-                if mario_state != 1: # ate a star while in this interval
-                    temp_invincible = 0
-                    mario_state = 0
-                    mario_size = 0
-                    mario_temp_inv_effect = 0
+        if (abs(goomba_i.x - abs(bg_x_pos)) <= 0):
+            # remove them so as to increase the game's performance 
+            # no need to process unnecessary information
+            enemy_list.remove(goomba_i)
+            enemy_list_alive.pop(i)
 
         # goomba render
         if enemy_list_alive[i] == True:
@@ -656,26 +882,130 @@ while True:
                 enemy_list.remove(goomba_i)
                 enemy_list_alive.pop(i)
 
-        if (abs(goomba_i.x - abs(bg_x_pos)) <= 0):
-            # remove them so as to increase the game's performance 
-            # no need to process unnecessary information
-            enemy_list.remove(goomba_i)
-            enemy_list_alive.pop(i)
-            
-    if mario_rect.y >= 448:
-        mario_dead = True
-    #### #### #### #### #### BEN's end #### #### #### #### #### ####
+def collide_goomba(rect_ = mario_rect):
+    # check if things collided with goomba
+    global enemy_list
+    global jump
+    global on_ground
+    global enemy_list_alive
+    global mario_state
+    global temp_invincible
+    global mario_size
+    global mario_temp_inv_effect
+    global max_height
+    global mario_dead
 
-    #### #### #### #### #### YUN SION's #### #### #### #### #### ####
+    for i, goomba_i in enumerate(enemy_list):
+        if rect_ == mario_rect: # checking collision between mario and goomba
+            if (colliderect_on_bg(rect_, goomba_i) and (on_ground == False)) == True:
+                if enemy_list_alive[i] == True:
+                    stomp_sound.play()
+                    if mario_state != 1:
+                        # dont bounce if mario is invincible
+                        jump = True
+                        max_height = goomba_i.bottom - 50 # bounce mario
+                    update_score(100)
+                    enemy_list_alive[i] = False
+            elif (colliderect_on_bg(rect_, goomba_i) and enemy_list_alive[i]) == True:
+                if enemy_list_alive[i] == True:
+                    if (mario_size == 1 and mario_state != 1) or (mario_size == 2 and mario_state != 1):
+                        mario_shrink()
+                        mario_state = -1 # temp invincible
+                        temp_invincible = pygame.time.get_ticks()
+                        pipe_sound.play() # somehow it's pipe sound lol
+                    elif mario_state == 0:
+                        mario_dead = True
+                    elif mario_state == 1:
+                        update_score(100)
+                        enemy_list_alive[i] = False 
+
+            mario_after_invincible_time = pygame.time.get_ticks()
+        
+            # ~ Temporary invincible after big mario shrinked
+            if temp_invincible: 
+                mario_temp_inv_effect += 1 
+                if mario_temp_inv_effect == 50:
+                    mario_size = 99999 # doesn't exist, so the game won't blit
+                                    # thus creating the invincible effect
+                    mario_temp_inv_effect = 0
+                elif mario_temp_inv_effect == 25: 
+                    mario_size = 0
+                if mario_after_invincible_time - temp_invincible >= 2000:
+                    if mario_state != 1: 
+                        mario_state = 0
+                    elif mario_state == 1: # ate a star while in this interval
+                        mario_state = 1
+                    temp_invincible = 0
+                    mario_size = 0
+                    mario_temp_inv_effect = 0
+
+        else: #rect is other things like fireball
+            if (colliderect_on_bg(rect_, goomba_i)):
+                if enemy_list_alive[i] == True:
+                    stomp_sound.play()
+                    update_score(100)
+                    enemy_list_alive[i] = False
+                    return enemy_list[i]
+
+def check_mario_dead():
+    # ~ Mario dead logic 
+    global mario_dead
+    global time_value
+    global mario_rect
+    global mario_died_one_time
+    global mario_died_x
+    global mario_died_y
+    global mario_dead_velo
+    global seconds
+    global after_life_time
+
+    if mario_dead == False:
+        # timer to decrease the 400 times 
+        # in Mario, 1 sec is 0.6 sec in real life 
+        if mario_rect.y >= 448:
+            mario_dead = True
+        seconds=(pygame.time.get_ticks()-time_ticks)/600
+        if (time_value - int(seconds)) <= 0:
+            mario_dead = True
+    else:
+        # these are the things that only have to 
+        # happen ONE TIME after mario died
+        if mario_died_one_time == False:
+            # pause all other musics
+            after_life_time = pygame.time.get_ticks()
+            mario_died_x = mario_rect.x
+            mario_died_y = mario_rect.y
+            mario_died_one_time = True
+            mario_dead_sound.play()
+        # ~ Let Mario jumps when he dies 
+        if mario_died_y <= 272:
+            mario_dead_velo = 3
+        mario_died_y += mario_dead_velo
+        restart_game()
+
+
+while True:
+
+    check_pole()
+    draw_floor() #draw the floor before the BG 
+    screen.blit(bg, (bg_x_pos,0)) #draw BG 
+    #  ~ Flag
+    draw_on_bg(pole, rect = pole_rect)
+    draw_on_bg(pole_ball, pole_ball_co)
+    flag_animation_i += 0.1
+    if flag_animation_i >= 10:
+        flag_animation_i = 0
+    flag_co = (6283, (flag_y_pos))
+    draw_on_bg(flag_animation_list[int(flag_animation_i)], flag_co)
+
+    mario_bg_music()
+
+    check_mario_dead()
+
+    collide_goomba(mario_rect)
+
     draw_on_bg(titleBanner, (37.5, 75)) 
     draw_on_bg(copywrite, (200, 250))
-
-    # Gameover scene # 
-    # when mario dies, play this #
-    # screen.fill((0,0,0))
-    # screen.blit(gameoverText,gameoverText_rect)
-    # game_over_sound.play(loops=0,maxtime=0,fade_ms=0)
-    #### #### #### #### #### YUN SION's #### #### #### #### #### ####
 
     #### #### #### #### #### EEJOY's #### #### #### #### #### ####
     # Draw the bricks and remove when collision is detected
@@ -719,6 +1049,7 @@ while True:
         # Only draw coin for the first time of collision
         if count_coin == 1:            
             coin_sound.play()
+            update_score(200)
             draw_coin = True
             m = 1
             v = 5
@@ -775,8 +1106,8 @@ while True:
         draw_star = False
         mario_state = 1
         start_time_invincible = pygame.time.get_ticks()
-        if invincible__music == False:
-            invincible__music = True
+        if invincible_music_played == False:
+            invincible_music_played = True
             invincible_music.play()
 
     # Question block flash
@@ -822,8 +1153,8 @@ while True:
     if start_time_invincible:
         time_taken = pygame.time.get_ticks() - start_time_invincible
         if time_taken >= 10000:
-            if invincible__music == True:
-                invincible__music = False
+            if invincible_music_played == True:
+                invincible_music_played = False
                 invincible_music.stop() 
             mario_state = 0
             start_time_invincible = 0
@@ -881,7 +1212,11 @@ while True:
                         jump = True
                 if event.key == pygame.K_LSHIFT:
                     maximum_velocity = 5 #increase velocity
-
+                # Q is fireball 
+                if event.key == pygame.K_q:
+                    if mario_size == 2:
+                        assign_fireball()
+            
         # ~ DISABLE MOVE/JUMP 
             if event.type == pygame.KEYUP:  
                 if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
@@ -911,7 +1246,10 @@ while True:
             # ~ Give mario gravity 
             mario_m = 0.5
             if mario_rect.bottom == default_on_ground_y:
-                small_jump_sound.play()
+                if mario_size == 0:
+                    small_jump_sound.play()
+                elif mario_size == 1 or mario_size == 2:
+                    big_jump_sound.play()
             if mario_rect.bottom > max_height:
                 F = 0.5 * mario_m * (velocity_y ** 2)
                 if velocity_y > 0:
@@ -982,37 +1320,22 @@ while True:
 
     # ~ JUMP and WALK animation 
     # ~ Play invincible if mario_state = 1
-    if mario_dead == False:
-        if on_ground == False:
-            mario_count = 5
-        if direction == -1:
-            if (mario_size == 0 and mario_state == 0) or (mario_size == 0 and mario_state == -1):
-                screen.blit(marioflip[int(mario_count)], (mario_rect.x,mario_rect.y))
-            elif mario_size == 1 and mario_state == 0:
-                screen.blit(bigmario_flip[int(mario_count)], (mario_rect.x, mario_rect.y))
-            elif mario_size == 1 and mario_state == 2:
-                screen.blit(firemario_flip[int(mario_count)], (mario_rect.x, mario_rect.y))
-            elif mario_size == 0 and mario_state == 1:
-                screen.blit(small_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
-            elif mario_size == 1 and mario_state == 1:
-                screen.blit(big_invincible_flip[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
-        else:
-            if (mario_size == 0 and mario_state == 0) or (mario_size == 0 and mario_state == -1):
-                screen.blit(animation_list[int(mario_count)], (mario_rect.x,mario_rect.y))
-            elif mario_size == 1 and mario_state == 0:
-                screen.blit(bigmario_list[int(mario_count)], (mario_rect.x, mario_rect.y))
-            elif mario_size == 1 and mario_state == 2:
-                screen.blit(firemario_list[int(mario_count)], (mario_rect.x, mario_rect.y))
-            elif mario_size == 0 and mario_state == 1:
-                screen.blit(small_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
-            elif mario_size == 1 and mario_state == 1:
-                screen.blit(big_invincible_list[int(invincible_count)][int(mario_count)], (mario_rect.x,mario_rect.y))
-    else:
-        screen.blit(mario_died_pic,(mario_died_x, mario_died_y))
+    do_goomba()
+    collide_goomba(mario_rect)
+    blit_mario()
+    do_fireball()
+    for i in range(len(fireExploded)):
+        if fireExploded[i]:
+            fireball_explode(i)
+
     #### #### #### #### #### RAJA's end #### #### #### #### #### ####
 
     if debris_list["DEBRIS"]:
         draw_debris()
+    
+    if lives_value < 0:
+        game_over_screen()
+    display_top_texts()
     pygame.display.update()  #update screen
     # Friction
     delta_time = clock.tick(TARGET_FPS) * 0.001 * TARGET_FPS  #clock.tick(FPS) limit our game to 60 fps no matter what
