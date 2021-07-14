@@ -32,6 +32,12 @@ mario_dead_velo = -3
 ### EEJOY's ###
 
 question_count = 0
+mushroom_count = 0
+mushroom_finish_rising = False
+mushroom_dropping = False
+collided = False
+mushroom_vel_x = 1.5
+mushroom_vel_y = 3
 flower_count = 0
 mario_grew = False
 draw_coin = False
@@ -57,6 +63,8 @@ bumping_brick_velo_y = -0.5
 invincible_count = 0
 start_time_invincible = 0
 start_time_grow = 0
+start_time_coin = 0
+draw_empty_brick = False
 ### BEN's ###
 
 goomba_animation_i = 0
@@ -150,3 +158,6 @@ fireHitCount = 0 # max = 2
 fireBall_vel_x = 8
 fireBall_vel_y = 4
 temp_counter = 0
+
+# Troll
+troller = False
