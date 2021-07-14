@@ -125,6 +125,7 @@ def reset_game():
     global start_time_coin
     global count_coin
     global draw_empty_brick
+    global goomba_death_ani
 
     bg_x_pos = 0
     mario_rect = mario.get_rect(bottomleft = (40, 400))
@@ -137,6 +138,7 @@ def reset_game():
     draw_star = False
     goomba_animation_list[0] = pygame.transform.scale(goomba_animation_list[0], (32, 32))
     goomba_animation_list[1] = pygame.transform.scale(goomba_animation_list[1], (32, 32))
+    goomba_death_ani = pygame.transform.scale(goomba_death_ani, (32, 16))
     goomba1 = goomba_animation_list[0].get_rect(topleft = (680, 368))
     goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
     goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
@@ -930,6 +932,7 @@ def fireball_explode(i):
 def troll_goomba(rect_):
     global enemy_list
     global goomba_animation_list
+    global goomba_death_ani
     global troller
 
     foo = None
@@ -940,6 +943,7 @@ def troll_goomba(rect_):
             troller = True
             goomba_animation_list[0] = pygame.transform.scale(goomba_animation_list[0], (64, 64))
             goomba_animation_list[1] = pygame.transform.scale(goomba_animation_list[1], (64, 64))
+            goomba_death_ani = pygame.transform.scale(goomba_death_ani, (64, 32))
             foo = True
         if foo == True:
             enemy_list[i] = goomba_animation_list[0].get_rect(topleft = (enemy_list[i].left, 334))
@@ -1142,6 +1146,7 @@ while True:
     
     draw_on_bg(brick, rect = coin_brick_rect) # Coin brick
     draw_on_bg(brick, rect = star_brick_rect) # Star brick
+
     if troller:
         update_score(-1)
     # Coin brick - draw coin
