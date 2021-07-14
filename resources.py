@@ -216,9 +216,11 @@ coin_rect9 = coin.get_rect(midtop = (5455, 272))
 
 # Import mushroom
 red_mushroom = pygame.image.load("static_images/red_mushroom.png")
-red_mushroom_rect1 = red_mushroom.get_rect(topleft = (672, 270))
-red_mushroom_rect2 = red_mushroom.get_rect(topleft = (2494, 270))
-red_mushroom_rect3 = red_mushroom.get_rect(topleft = (3486, 142))
+red_mushroom_flip = pygame.transform.flip(red_mushroom, True, False)
+red_mushroom_list = [red_mushroom, red_mushroom_flip]
+red_mushroom_rect1 = red_mushroom_list[0].get_rect(topleft = (672, 270))
+red_mushroom_rect2 = red_mushroom_list[0].get_rect(topleft = (2494, 270))
+red_mushroom_rect3 = red_mushroom_list[0].get_rect(topleft = (3486, 142))
 
 # Import empty brick
 empty_brick = pygame.image.load("static_images/empty_brick.png")
@@ -259,7 +261,10 @@ hit_box_list = [question_rect1,question_rect2,question_rect3,question_rect4,ques
                 rock_rect4_2, rock_rect4_3, rock_rect5_1, rock_rect5_2, rock_rect5_3, rock_rect13_1, rock_rect13_2, rock_rect13_3,
                 rock_rect14_1, rock_rect14_2, rock_rect14_3, rock_rect26_1, rock_rect26_2, rock_rect26_3, rock_rect26_4,
                 rock_rect26_5, rock_rect26_6, rock_rect26_7]
-
+                
+mushroom_hit_box_list_x = [rock_rect1, pipe1_rect]
+mushroom_hit_box_list_y = [question_rect2, question_rect7, question_rect10, question_rect11, question_rect12, 
+                            brick_rect2, brick_rect3, brick_rect5, floor1, floor2, floor3, floor4]
 # Import star
 star = []
 star.append(pygame.image.load("animate_images/star0.png"))
