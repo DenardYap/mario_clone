@@ -9,6 +9,7 @@ click on the link below to see the real mario game
 https://supermarioplay.com/
 """
 
+# star rect didn't dissapear, become inv again if touch it
 import pygame 
 from copy import copy
 import sys
@@ -91,7 +92,6 @@ def reset_game():
     global main_theme_fastvers
     global invincible_music_played
     global after_life_time
-    global after_dead_time
     global coin_list
     global mushroom_list
     global flower_list
@@ -111,6 +111,20 @@ def reset_game():
     global flower_rect2
     global flower_rect3
     global count_star
+    global red_mushroom_rect1
+    global red_mushroom_rect2
+    global red_mushroom_rect3
+    global mushroom_hit_box_list_x
+    global mushroom_hit_box_list_y
+    global mushroom_vel_x
+    global collided
+    global mushroom_dropping
+    global mushroom_finish_rising
+    global mushroom_count
+    global troller
+    global start_time_coin
+    global count_coin
+    global draw_empty_brick
 
     bg_x_pos = 0
     mario_rect = mario.get_rect(bottomleft = (40, 400))
@@ -121,6 +135,8 @@ def reset_game():
     mario_died_one_time = False
     draw_coin = False
     draw_star = False
+    goomba_animation_list[0] = pygame.transform.scale(goomba_animation_list[0], (32, 32))
+    goomba_animation_list[1] = pygame.transform.scale(goomba_animation_list[1], (32, 32))
     goomba1 = goomba_animation_list[0].get_rect(topleft = (680, 368))
     goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
     goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
@@ -201,14 +217,26 @@ def reset_game():
                 rock_rect4_2, rock_rect4_3, rock_rect5_1, rock_rect5_2, rock_rect5_3, rock_rect13_1, rock_rect13_2, rock_rect13_3,
                 rock_rect14_1, rock_rect14_2, rock_rect14_3, rock_rect26_1, rock_rect26_2, rock_rect26_3, rock_rect26_4,
                 rock_rect26_5, rock_rect26_6, rock_rect26_7]
-    red_mushroom_rect1 = red_mushroom.get_rect(topleft = (672, 270))
-    red_mushroom_rect2 = red_mushroom.get_rect(topleft = (2494, 270))
-    red_mushroom_rect3 = red_mushroom.get_rect(topleft = (3486, 142))
+    red_mushroom_rect1 = red_mushroom_list[0].get_rect(topleft = (672, 270))
+    red_mushroom_rect2 = red_mushroom_list[0].get_rect(topleft = (2494, 270))
+    red_mushroom_rect3 = red_mushroom_list[0].get_rect(topleft = (3486, 142))
+    mushroom_count = 0
+    mushroom_finish_rising = False
+    mushroom_dropping = False
+    collided = False
+    mushroom_vel_x = 1.5
+    mushroom_hit_box_list_x = [rock_rect1, pipe1_rect]
+    mushroom_hit_box_list_y = [question_rect2, question_rect7, question_rect10, question_rect11, question_rect12, 
+                                brick_rect2, brick_rect3, brick_rect5, floor1, floor2, floor3, floor4]
     star_rect = star[0].get_rect(topleft = (3231, 270))
     flower_rect1 = flower[0].get_rect(topleft = (672, 270))
     flower_rect2 = flower[0].get_rect(topleft = (2494, 270))
     flower_rect3 = flower[0].get_rect(topleft = (3486, 142))
     count_star = 0
+    troller = False
+    start_time_coin = 0
+    count_coin = 0
+    draw_empty_brick = False
 
 ####### GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET GAME RESET #####   
 def restart_game(time_interval = 5000):
@@ -460,10 +488,10 @@ def draw_empty_brick_rect(question_rect):
 
 def draw_coin_rect(question_rect, coin_rect):
     if colliderect_on_bg_bottom(mario_rect, question_rect):
-        coin_list .append(coin_rect)
+        coin_list.append(coin_rect)
         empty_brick_list.append(question_rect)
         
-    if coin_rect in coin_list :
+    if coin_rect in coin_list:
         draw_on_bg(coin, rect = coin_rect)
         coin_jump(coin_rect, question_rect)
 
@@ -480,7 +508,7 @@ def coin_jump(coin_rect, question_rect):
     if not coin_rect.y > question_rect.y:
         F = (1/2) * m * (v ** 2)
         coin_rect.y -= F
-        v -= 0.2
+        v -= 0.25
         if v < 0:
             m = -1
     else:
@@ -489,23 +517,27 @@ def coin_jump(coin_rect, question_rect):
         v = 5
 
 def remove_coin_rect(coin_rect):
-    for coin in coin_list :
+    for coin in coin_list:
         if coin == coin_rect:
-            coin_list .remove(coin_rect)
+            coin_list.remove(coin_rect)
     
 def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
+    global mushroom_finish_rising
+    global mushroom_vel_x
     if colliderect_on_bg_bottom(mario_rect, question_rect):
         empty_brick_list.append(question_rect)
         if mario_size == 0 or mario_size == 99999:
             mushroom_list.append(red_mushroom_rect)
             drawn_mushroom_list.append(red_mushroom_rect) #make sure only either mushroom or flower pop up once
+            mushroom_finish_rising = False
+            mushroom_vel_x = 1.5
         elif (mario_size == 1 or mario_size == 2) and red_mushroom_rect not in drawn_mushroom_list and flower_rect not in drawn_flower_list:
             flower_list.append(flower_rect)
             drawn_flower_list.append(flower_rect) #make sure only either mushroom or flower pop up once
 
     if red_mushroom_rect in mushroom_list:
         draw_on_bg(red_mushroom, rect = red_mushroom_rect)
-        mushroom_flower_rise(red_mushroom_rect, question_rect)
+        mushroom_rise(red_mushroom_rect, question_rect)
 
     if flower_rect in flower_list:
         global flower_count
@@ -513,18 +545,40 @@ def draw_mushroom_or_flower_rect(question_rect, red_mushroom_rect, flower_rect):
         if flower_count >= 3:
             flower_count = 0
         draw_on_bg(flower[int(flower_count)], rect = flower_rect)
-        mushroom_flower_rise(flower_rect, question_rect)
+        flower_rise(flower_rect, question_rect)
 
     remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect)
     draw_empty_brick_rect(question_rect)
 
-def mushroom_flower_rise(mushroom_flower_rect, question_rect):
-    if (question_rect.top - mushroom_flower_rect.top) == 2:
-        powerup_pop_sound.play()
-    if ((mushroom_flower_rect.midbottom[1] >= question_rect.midtop[1]) and 
-       not(mushroom_flower_rect.bottom <= question_rect.top)):
-        mushroom_flower_rect.y -= 1
+def mushroom_rise(mushroom_rect, question_rect):
+    global mushroom_finish_rising
+    global mushroom_vel_x
+    global mushroom_vel_y
+    global mushroom_dropping
 
+    if (question_rect.top - mushroom_rect.top) == 2 and mushroom_finish_rising == False:
+        powerup_pop_sound.play()
+
+    if (mushroom_rect.bottom >= question_rect.top) and mushroom_finish_rising == False:
+        mushroom_rect.y -= 1
+    else:
+        mushroom_finish_rising = True
+        
+    if mushroom_finish_rising:
+        troll_goomba(mushroom_rect)
+        mushroom_rect.x += mushroom_vel_x
+        if mushroom_dropping:
+            mushroom_rect.y += mushroom_vel_y
+        check_mushroom_x(mushroom_rect)
+        check_mushroom_y(mushroom_rect)
+
+def flower_rise(flower_rect, question_rect):
+    if (question_rect.top - flower_rect.top) == 2:
+        powerup_pop_sound.play()
+    if ((flower_rect.midbottom[1] >= question_rect.midtop[1]) and 
+       not(flower_rect.bottom <= question_rect.top)):
+        flower_rect.y -= 1
+        
 def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
     global start_time_grow
     if colliderect_on_bg(mario_rect, red_mushroom_rect):
@@ -543,6 +597,37 @@ def remove_mushroom_or_flower_rect(red_mushroom_rect, flower_rect):
                 update_score(1000)
                 mario_grow_fire()
 
+def check_mushroom_x(mushroom_rect):
+    global mushroom_hit_box_list_x
+    global mushroom_count
+    global mushroom_vel_x
+    global mushroom_dropping
+    
+    for hit_box in mushroom_hit_box_list_x:
+        if mushroom_rect.colliderect(hit_box):
+            if mushroom_vel_x > 0:
+                mushroom_vel_x = -1.5
+                mushroom_count = 1
+            elif mushroom_vel_x < 0:
+                mushroom_vel_x = 1.5
+                mushroom_count = 0
+
+def check_mushroom_y(mushroom_rect):
+    global mushroom_hit_box_list_y
+    global mushroom_vel_y
+    global mushroom_dropping
+    global collided
+
+    for hit_box in mushroom_hit_box_list_y:
+        if mushroom_rect.colliderect(hit_box):
+            collided = True
+
+    if collided:
+        mushroom_dropping = False
+        collided = False
+    else:
+        mushroom_dropping = True
+        
 def mario_grow():
     global mario_size
     global mario_rect
@@ -842,6 +927,22 @@ def fireball_explode(i):
         temp_counter = 0
         fireExploded[i] = None
 
+def troll_goomba(rect_):
+    global enemy_list
+    global goomba_animation_list
+    global troller
+
+    foo = None
+    for i, goomba_i in enumerate(enemy_list):
+        if rect_.colliderect(goomba_i):
+            mushroom_list.remove(rect_)
+            powerup_eat_sound.play()
+            troller = True
+            goomba_animation_list[0] = pygame.transform.scale(goomba_animation_list[0], (64, 64))
+            goomba_animation_list[1] = pygame.transform.scale(goomba_animation_list[1], (64, 64))
+            foo = True
+        if foo == True:
+            enemy_list[i] = goomba_animation_list[0].get_rect(topleft = (enemy_list[i].left, 334))
 def do_goomba():
     
     # goomba's moving and blitting
@@ -856,7 +957,6 @@ def do_goomba():
         # need to change goomba_alive to goomba_i.alive
         if (enemy_list_alive[i] == True) and (abs(goomba_i.x - abs(bg_x_pos)) <= 1000):
             goomba_i.x -= 1
-
         # goomba animation
         goomba_animation_i += 0.005
         if goomba_animation_i >= 2:
@@ -917,6 +1017,7 @@ def collide_goomba(rect_ = mario_rect):
                         mario_dead = True
                     elif mario_state == 1:
                         update_score(100)
+                        mario_kick_sound.play() 
                         enemy_list_alive[i] = False 
 
             mario_after_invincible_time = pygame.time.get_ticks()
@@ -1041,18 +1142,26 @@ while True:
     
     draw_on_bg(brick, rect = coin_brick_rect) # Coin brick
     draw_on_bg(brick, rect = star_brick_rect) # Star brick
-
+    if troller:
+        update_score(-1)
     # Coin brick - draw coin
     if colliderect_on_bg_bottom(mario_rect, coin_brick_rect):
         count_coin += 1
-
         # Only draw coin for the first time of collision
-        if count_coin == 1:            
-            coin_sound.play()
-            update_score(200)
-            draw_coin = True
-            m = 1
-            v = 5
+        if count_coin == 1:     
+            start_time_coin = pygame.time.get_ticks()      
+            
+        if start_time_coin:
+            coin_time_taken = pygame.time.get_ticks() - start_time_coin
+            if coin_time_taken <= 4000:
+                coin_sound.play()
+                update_coins()
+                update_score(200)
+                draw_coin = True
+                m = 1
+                v = 5
+            else:
+                draw_empty_brick = True 
             
     if draw_coin:
         draw_on_bg(coin, rect = coin_rect0)
@@ -1060,13 +1169,19 @@ while True:
         # Let the coin jump
         F = (1/2) * m * (v ** 2) 
         coin_rect0.y -= F
-        v -= 0.1
+        v -= 0.25
         if v < 0:
             m = -1
 
-    if coin_rect0.y > coin_brick_rect.y:
-        draw_coin = False
-
+        if coin_rect0.y > coin_brick_rect.y:
+            draw_coin = False
+            
+    if draw_empty_brick:
+        # Draw empty brick after 4 seconds of the first collsion
+        draw_on_bg(empty_brick, rect = coin_brick_rect)
+    else:
+        # Draw coin brick
+        draw_on_bg(brick, rect = coin_brick_rect)
     # Star brick - draw star
     if colliderect_on_bg_bottom(mario_rect, star_brick_rect):
         count_star += 1
@@ -1337,5 +1452,4 @@ while True:
         game_over_screen()
     display_top_texts()
     pygame.display.update()  #update screen
-    # Friction
     delta_time = clock.tick(TARGET_FPS) * 0.001 * TARGET_FPS  #clock.tick(FPS) limit our game to 60 fps no matter what
