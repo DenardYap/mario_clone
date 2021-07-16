@@ -1150,7 +1150,7 @@ while True:
     if troller:
         update_score(-1)
     # Coin brick - draw coin
-    if colliderect_on_bg_bottom(mario_rect, coin_brick_rect):
+    if colliderect_on_bg_bottom(mario_rect, coin_brick_rect) and draw_coin == False:
         count_coin += 1
         # Only draw coin for the first time of collision
         if count_coin == 1:     
@@ -1164,7 +1164,7 @@ while True:
                 update_score(200)
                 draw_coin = True
                 m = 1
-                v = 5
+                v = 5   
             else:
                 draw_empty_brick = True 
             
