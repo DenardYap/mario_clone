@@ -8,26 +8,42 @@ Eejoy
 5) Made mushroom animation
 6) Made question block shining animation 
 7) Made bricks destroyable 
+8) Made mushrooms move AND fall 
+9) Continuous coin_brick logic 
+10) Mario grow up animation and logic
+11) Flower animation and logic 
+12) Star invincible logic & animation 
 
 Raja
 1) Made mario walk and jump 
 2) Made mario able to stand on bricks, floors and pipes
 3) Made mario unable to pass thru pipes and bricks horizontally
 4) Contributed to Jumping's logics 
+5) Added respective sound effects, musics, coin update and score update when respective events triggered 
+6) Contribution to functions check_collisionx & check_collisiony (Friction & Gravity)
 
 Naz
-1) Made the background screen move along with mario
+1) Made the background screen move along with mario (bg_x_pos)
 2) Contributed to mario walk and jump's logic
+3) Designed doge flag 
+4) End game's Pole logics, and end game sequence, end game animation
 
 Ben
 1) Made enemy goomba kill-able from the top
 2) Made mario die when hit goomba from the sides
 3) Made goomba only appear when mario is in a certain location
+4) Added all enemies in respective locations 
 
 Yun Sion
 1) Rendered title banner + copywrite 
 2) Made gameover scene + logics 
 
-Luke
-
-Tarun
+Bernard
+1) Project leader, provided resources, held meeting and supervised project crews 
+2) Top texts' logic & render (score, coin, world, time, etc) 
+3) Make bricks slightly bounce when small mario hits them from the bottom
+4) Brick debris' animation & logic
+5) Bounced after jump on goomba 
+6) Temporary invincible after big mario touches goomba from the side 
+7) Dead's logic and dead animation
+8) Friction and gravity 
