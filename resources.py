@@ -213,6 +213,9 @@ coin_rect6 = coin.get_rect(midtop = (3502, 272))
 coin_rect7 = coin.get_rect(midtop = (3598, 272))
 coin_rect8 = coin.get_rect(midtop = (4143, 144))
 coin_rect9 = coin.get_rect(midtop = (5455, 272))
+coin_brick_list = []
+coin_brick_list_mass = []
+coin_brick_list_vel = []
 
 # Import mushroom
 red_mushroom = pygame.image.load("static_images/red_mushroom.png")
