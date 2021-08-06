@@ -12,12 +12,15 @@ bglimitH = screenH - bgH
 flag_animation_i = 0
 play_flag_song = 0
 flag_y_pos = 93
-end_song=0
+end_song = 0
 endgame_delay = 0
 flag_mario_drop = False
 jump_logic = True
 bonus_score = 0
 play_flag_song = False 
+mario_clear_stage = False
+marioEndScene = False
+win_animation = 0
 TARGET_FPS = 60
 # marioSpeed = 10
 
