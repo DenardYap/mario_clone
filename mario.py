@@ -679,6 +679,8 @@ def endgameSequence():
     global jump_logic
     global endgame_delay
     global flag_mario_drop
+    global win_animation
+    global jump
 
     current_playing_music = check_music_playing()
     if current_playing_music:
@@ -697,13 +699,31 @@ def endgameSequence():
         if mario_rect.y <336:
             mario_rect.y += 4
 
+    if endgame_delay > 150: #Wait a brief before mario moves to the castle
+        jump_logic = True
+        print(mario_rect.x)
+        if mario_rect.x < 745: #Mario walks to the castle
+            moving_right = True
+        else:
+            moving_right = False #Mario stops walking when he reached the door
+            mario_rect.x = 745
+
+        if mario_rect.x == 745: #Mario in range of the door
+            win_animation += 1
+            if win_animation == 50:
+                jump = True
+            if win_animation == 65:
+                jump = False
+                win_animation = 0
+
 def check_pole():
     global score_value
     global bonus_score
+    global marioEndScene
 
     if colliderect_on_bg(mario_rect, pole_rect):
         
-        endgameSequence()
+        marioEndScene = True
 
         bonus_score += 1
         if bonus_score == 1:
@@ -869,7 +889,6 @@ def blit_mario():
         screen.blit(mario_died_pic,(mario_died_x, mario_died_y))
 
 def assign_fireball():
-    
     # spawn fireball
     global fireBall_rect_list
     for i in range(len(fireBall_rect_list)): 
@@ -1069,7 +1088,8 @@ def check_mario_dead():
         # in Mario, 1 sec is 0.6 sec in real life 
         if mario_rect.y >= 448:
             mario_dead = True
-        seconds=(pygame.time.get_ticks()-time_ticks)/600
+        if marioEndScene == False:
+            seconds=(pygame.time.get_ticks()-time_ticks)/600
         if (time_value - int(seconds)) <= 0:
             mario_dead = True
     else:
@@ -1088,9 +1108,10 @@ def check_mario_dead():
         mario_died_y += mario_dead_velo
         restart_game()
 
-
 while True:
 
+    if marioEndScene:
+        endgameSequence()
     check_pole()
     draw_floor() #draw the floor before the BG 
     screen.blit(bg, (bg_x_pos,0)) #draw BG 
