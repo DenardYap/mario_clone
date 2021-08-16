@@ -409,6 +409,45 @@ def check_collisonsy():
         elif mario_rect.bottom > default_on_ground_y:
             on_ground = False
 
+#check goomba collisions with pipes,floors and other goombas
+
+def goomba_collisionx():
+    global goomba_hitbox_x
+    global goomba_velocity_x_list
+
+    for hit_box in goomba_hitbox_x:
+        for i,goomba_i in enumerate(enemy_list): 
+            if goomba_i.colliderect(hit_box):
+                if abs(goomba_i.left - hit_box.right) <= 1:
+                    goomba_velocity_x_list[i] = -1
+                elif abs(goomba_i.right - hit_box.left) <= 1:
+                    goomba_velocity_x_list[i] = 1
+    
+    if goomba3 in enemy_list and goomba4 in enemy_list:
+        if goomba3.colliderect(goomba4):
+            if abs(goomba3.right - goomba4.left) <= 1:
+                goomba_velocity_x_list[-14] = 1
+                goomba_velocity_x_list[-13] = -1
+    if goomba15 in enemy_list and goomba16 in enemy_list:
+        if goomba15.colliderect(goomba16):
+            if abs(goomba15.right - goomba16.left) <= 1:
+                goomba_velocity_x_list[-2] = 1
+                goomba_velocity_x_list[-1] = -1
+
+def goomba_collisiony():
+    global goomba_hitbox_y
+    global goomba_velocity_y_list
+
+    for hit_box in goomba_hitbox_y:
+        for i,goomba_i in enumerate(enemy_list): 
+            if goomba_i.colliderect(hit_box):
+                goomba_velocity_y_list[i] = 0
+                goomba_i.bottom = hit_box.top
+            else:
+                enemy_list_alive[i] == False
+                goomba_velocity_y_list[i] = 5
+
+
 #### #### #### #### #### EEJOY's #### #### #### #### #### ####
 
 # ~ The names of the functions are pretty intuitive and you 
@@ -974,12 +1013,17 @@ def do_goomba():
     global goomba_animation_i
     global bg_x_pos
     global goomba_ticks
+    global goomba_velocity_x_list
 
     # goomba move
     for i, goomba_i in enumerate(enemy_list):
         # need to change goomba_alive to goomba_i.alive
         if (enemy_list_alive[i] == True) and (abs(goomba_i.x - abs(bg_x_pos)) <= 1000):
-            goomba_i.x -= 1
+            goomba_i.x -= goomba_velocity_x_list[i]
+            goomba_i.y += goomba_velocity_y_list[i]
+
+            goomba_collisionx()
+            goomba_collisiony()
         # goomba animation
         goomba_animation_i += 0.005
         if goomba_animation_i >= 2:
@@ -1003,6 +1047,7 @@ def do_goomba():
             if goomba_count_tick - goomba_ticks[i] >= 1000:
                 goomba_ticks.pop(i)
                 enemy_list.remove(goomba_i)
+                goomba_velocity_x_list.pop(i)
                 enemy_list_alive.pop(i)
 
 def collide_goomba(rect_ = mario_rect):
