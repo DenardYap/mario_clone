@@ -268,6 +268,10 @@ hit_box_list = [question_rect1,question_rect2,question_rect3,question_rect4,ques
 mushroom_hit_box_list_x = [rock_rect1, pipe1_rect]
 mushroom_hit_box_list_y = [question_rect2, question_rect7, question_rect10, question_rect11, question_rect12, 
                             brick_rect2, brick_rect3, brick_rect5, floor1, floor2, floor3, floor4]
+
+goomba_hitbox_x = [pipe1_rect, pipe2_rect, pipe3_rect, pipe4_rect, pipe5_rect, pipe6_rect] 
+goomba_hitbox_y = [floor1, floor2, floor3, floor4]     
+              
 # Import star
 star = []
 star.append(pygame.image.load("animate_images/star0.png"))
