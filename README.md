@@ -1,5 +1,5 @@
 Gameplay preview 
-<br\>
+</br>
 ![mario_gameplay1](mario_gameplay1.gif)
 ![mario_gameplay2](mario_gameplay2.gif)
 Download the graphics, font, and sound files to be used in your code
