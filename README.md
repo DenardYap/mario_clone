@@ -1,9 +1,5 @@
 Gameplay preview
-<video width="320" height="240" controls>
-  <source src="movie.mp4" type="video/mp4">
-  <source src="movie.ogg" type="video/ogg">
-Your browser does not support the video tag.
-</video>
+![mario_gameplay1](mario_gameplay1.gif)
 Download the graphics, font, and sound files to be used in your code
 https://drive.google.com/drive/folders/1WXHI-pd8VQT9KvmAx280LxZfvcfG7jOh?usp=sharing
 
