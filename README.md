@@ -1,5 +1,4 @@
 <h1> Gameplay preview 
-</br>
 ![mario_gameplay1](mario_gameplay1.gif)
 ![mario_gameplay2](mario_gameplay2.gif)
 </h1>
