@@ -92,6 +92,9 @@ goomba16_alive = True
 enemy_list_alive = [goomba1_alive, goomba2_alive, goomba3_alive, goomba4_alive, goomba5_alive, goomba6_alive, goomba7_alive, goomba8_alive, goomba9_alive, goomba10_alive, goomba11_alive, goomba12_alive, goomba13_alive, goomba14_alive, goomba15_alive, goomba16_alive]
 goomba_ticks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
+goomba_velocity_x_list = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+goomba_velocity_y_list = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
 ##Darshini's##
 BASE = 368 #mario default landing point = floor
 x_pos = 50

@@ -126,6 +126,10 @@ def reset_game():
     global count_coin
     global draw_empty_brick
     global goomba_death_ani
+    global goomba_hitbox_x
+    global goomba_hitbox_y
+    global goomba_velocity_x_list
+    global goomba_velocity_y_list
 
     bg_x_pos = 0
     mario_rect = mario.get_rect(bottomleft = (40, 400))
@@ -143,8 +147,8 @@ def reset_game():
     goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
     goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
     goomba4 = goomba_animation_list[0].get_rect(topleft = (1680, 368))
-    goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 368))
-    goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 368))
+    goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 112))
+    goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 112))
     goomba7 = goomba_animation_list[0].get_rect(topleft = (3110, 368))
     # turtle = (1705, 368)
     goomba8 = goomba_animation_list[0].get_rect(topleft = (3170, 368))
@@ -230,6 +234,10 @@ def reset_game():
     mushroom_hit_box_list_x = [rock_rect1, pipe1_rect]
     mushroom_hit_box_list_y = [question_rect2, question_rect7, question_rect10, question_rect11, question_rect12, 
                                 brick_rect2, brick_rect3, brick_rect5, floor1, floor2, floor3, floor4]
+    goomba_hitbox_x = [pipe1_rect, pipe2_rect, pipe3_rect, pipe4_rect, pipe5_rect, pipe6_rect] 
+    goomba_hitbox_y = [floor1, floor2, floor3, floor4, brick_rect4, brick_rect5, brick_rect6, brick_rect7, brick_rect8, brick_rect9, brick_rect10, brick_rect11, brick_rect12, question_rect11]
+    goomba_velocity_x_list = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    goomba_velocity_y_list = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     star_rect = star[0].get_rect(topleft = (3231, 270))
     flower_rect1 = flower[0].get_rect(topleft = (672, 270))
     flower_rect2 = flower[0].get_rect(topleft = (2494, 270))
@@ -408,6 +416,45 @@ def check_collisonsy():
                 on_ground = True
         elif mario_rect.bottom > default_on_ground_y:
             on_ground = False
+
+#check goomba collisions with pipes,floors and other goombas
+
+def goomba_collisionx():
+    global goomba_hitbox_x
+    global goomba_velocity_x_list
+
+    for hit_box in goomba_hitbox_x:
+        for i,goomba_i in enumerate(enemy_list): 
+            if goomba_i.colliderect(hit_box):
+                if abs(goomba_i.left - hit_box.right) <= 1:
+                    goomba_velocity_x_list[i] = -1
+                elif abs(goomba_i.right - hit_box.left) <= 1:
+                    goomba_velocity_x_list[i] = 1
+    
+    if goomba3 in enemy_list and goomba4 in enemy_list:
+        if goomba3.colliderect(goomba4):
+            if abs(goomba3.right - goomba4.left) <= 1:
+                goomba_velocity_x_list[-14] = 1
+                goomba_velocity_x_list[-13] = -1
+    if goomba15 in enemy_list and goomba16 in enemy_list:
+        if goomba15.colliderect(goomba16):
+            if abs(goomba15.right - goomba16.left) <= 1:
+                goomba_velocity_x_list[-2] = 1
+                goomba_velocity_x_list[-1] = -1
+
+def goomba_collisiony():
+    global goomba_hitbox_y
+    global goomba_velocity_y_list
+
+    for hit_box in goomba_hitbox_y:
+        for i,goomba_i in enumerate(enemy_list): 
+            if goomba_i.colliderect(hit_box):
+                goomba_velocity_y_list[i] = 0
+                goomba_i.bottom = hit_box.top
+            else:
+                enemy_list_alive[i] == False
+                goomba_velocity_y_list[i] = 5
+
 
 #### #### #### #### #### EEJOY's #### #### #### #### #### ####
 
@@ -974,12 +1021,17 @@ def do_goomba():
     global goomba_animation_i
     global bg_x_pos
     global goomba_ticks
+    global goomba_velocity_x_list
 
     # goomba move
     for i, goomba_i in enumerate(enemy_list):
         # need to change goomba_alive to goomba_i.alive
         if (enemy_list_alive[i] == True) and (abs(goomba_i.x - abs(bg_x_pos)) <= 1000):
-            goomba_i.x -= 1
+            goomba_i.x -= goomba_velocity_x_list[i]
+            goomba_i.y += goomba_velocity_y_list[i]
+
+            goomba_collisionx()
+            goomba_collisiony()
         # goomba animation
         goomba_animation_i += 0.005
         if goomba_animation_i >= 2:
@@ -1003,6 +1055,7 @@ def do_goomba():
             if goomba_count_tick - goomba_ticks[i] >= 1000:
                 goomba_ticks.pop(i)
                 enemy_list.remove(goomba_i)
+                goomba_velocity_x_list.pop(i)
                 enemy_list_alive.pop(i)
 
 def collide_goomba(rect_ = mario_rect):

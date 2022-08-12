@@ -95,8 +95,8 @@ goomba1 = goomba_animation_list[0].get_rect(topleft = (680, 368))
 goomba2 = goomba_animation_list[0].get_rect(topleft = (1300, 368))
 goomba3 = goomba_animation_list[0].get_rect(topleft = (1620, 368))
 goomba4 = goomba_animation_list[0].get_rect(topleft = (1680, 368))
-goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 368))
-goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 368))
+goomba5 = goomba_animation_list[0].get_rect(topleft = (2572, 112))
+goomba6 = goomba_animation_list[0].get_rect(topleft = (2630, 112))
 goomba7 = goomba_animation_list[0].get_rect(topleft = (3110, 368))
 # turtle = (1705, 368)
 goomba8 = goomba_animation_list[0].get_rect(topleft = (3170, 368))
@@ -268,6 +268,10 @@ hit_box_list = [question_rect1,question_rect2,question_rect3,question_rect4,ques
 mushroom_hit_box_list_x = [rock_rect1, pipe1_rect]
 mushroom_hit_box_list_y = [question_rect2, question_rect7, question_rect10, question_rect11, question_rect12, 
                             brick_rect2, brick_rect3, brick_rect5, floor1, floor2, floor3, floor4]
+
+goomba_hitbox_x = [pipe1_rect, pipe2_rect, pipe3_rect, pipe4_rect, pipe5_rect, pipe6_rect]
+goomba_hitbox_y = [floor1, floor2, floor3, floor4, brick_rect4, brick_rect5, brick_rect6, brick_rect7, brick_rect8, brick_rect9, brick_rect10, brick_rect11, brick_rect12, question_rect11]      
+              
 # Import star
 star = []
 star.append(pygame.image.load("animate_images/star0.png"))
